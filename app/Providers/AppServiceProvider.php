@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Student;
 use Illuminate\Support\ServiceProvider;
+
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $students=Student::select('id','name','group_name')->get();
+        View::share('students',$students);
     }
 }

@@ -15,7 +15,7 @@ class StudentController extends Controller
     public function save(Request $request)
     {
         $student=$request->input("student_id");
-        if($this->judge($request->input("student"), $request->input("password"))==1)
+        if($this->judge($request->input("student_id"), $request->input("password"))==1)
         {
             $name=Student::where("student_id",$student)->value("name");
             return view("main",[

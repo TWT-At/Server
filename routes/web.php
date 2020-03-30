@@ -22,4 +22,13 @@ Route::post('/at/save',["uses" => "StudentController@save"]);
 
 Route::get('/at/admin',["uses" => "AdminController@admin"]);
 
-Route::get('at/main',['uses' => "PageController@main"]);
+//Route::get('at/main',['uses' => "PageController@main"]);
+
+/*
+ * View OF Route*/
+Route::get('at/main',function (){
+    return view('main');
+});
+Route::get('at/WeekMessage',function (){
+    return view("student.WeekMessage");
+});

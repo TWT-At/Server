@@ -27,11 +27,17 @@ Route::get('/at/admin',["uses" => "AdminController@admin"]);
 //Route::get('at/main',['uses' => "PageController@main"]);
 
 /*
- * View OF Route*/
+ * View OF Route
+ * */
 Route::get('at/main',function (){
     return view('main');
 });
-Route::get('at/WeekMessage',function (Request $request){
-     $_SESSION["name"]=$request->session()->get("name");
-     return view("student.WeekMessage")->with("name",$request->session()->get("name"));
+
+Route::get('at/WeekMessage',function (){
+
+     return view("student.WeekMessage");
+});
+
+Route::get('at/description',function (){
+    return view("student.description");
 });

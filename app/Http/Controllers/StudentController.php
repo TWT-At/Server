@@ -19,7 +19,8 @@ class StudentController extends Controller
         if($this->judge($request->input("student_id"), $request->input("password"))==1)
         {
             $name=Student::where("student_id",$student)->value("name");
-            $request->session()->put("name",$name);
+            //$request->session()->put("name",$name);
+            $_SESSION["name"]=$name;
             return view("main",[
                 "name" => $request->session()->get("name")
             ]);

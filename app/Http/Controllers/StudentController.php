@@ -22,6 +22,7 @@ class StudentController extends Controller
             $name=Student::where("student_id",$student)->value("name");
             $group=Student::where("student_id",$student)->value("group_name");
             $created_at=strtotime(Student::where("student_id",$student)->value("created_at"));
+            $permission=Student::where("student_id",$student)->value("permission");
             $time=time();
             $date=floor(($time-$created_at)/86400);
 
@@ -30,11 +31,30 @@ class StudentController extends Controller
             $request->session()->put("group",$group);
             $request->session()->put("date",$date);
             $request->session()->put("student",$student);
-
+            $request->session()->put("permission",$permission);
+            $session=$request->session()->all();
             //$_SESSION["name"]=$name;
-            return view("main");
+            //return view("main");
+            return response()->json(
+                [
+                    "error_code" => 0,
+                    "data" =>
+                        [
+                            "name" => $name,
+                            "group" => $group,
+                            "student_id" => $student,
+                            "date" => $date,
+                            "permission" => $permission,
+                        ],
+                    "session" => $session,
+                ]
+            );
         }
-        else return "账号不存在或密码错误";
+        else return response()->json(
+            [
+                "error_code" => 1
+            ]
+        );
 
     }
     public function judge($student_id,$password)

@@ -38,7 +38,16 @@ Route::post('/save',["uses" => "StudentController@save"]);//储存用户信息
 Route::get('/admin',["uses" => "AdminController@admin"]);
 
 
+/*后台端*/
+Route::prefix("admin")->group(function (){
+    Route::post('/add',["uses" => "AdminController@add"]);//添加用户
 
+    Route::post('/remove',["uses" => "AdminController@remove"]);//删除用户
+
+    Route::post("/search",["uses" => "AdminController@search"]);//查询用户
+
+    Route::post("/update",["uses" => "AdminController@update"]);//更新用户资料
+});
 
 /*
  * View OF Route

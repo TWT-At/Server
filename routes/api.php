@@ -18,28 +18,44 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 /*周报*/
-Route::post('/message',"PageController@editor");//存储周报
+Route::group([
+    'middleware' => "session",
+],function (){
+    Route::post('/message',["uses" => "PageController@editor"]);//存储周报
 
-Route::get('/GetMessage','PageController@GetMessage');//获取周报
+    Route::get('/GetMessage',["uses" => 'PageController@GetMessage']);//获取周报
+});
+
+
+
 
 /*工作日志*/
-Route::post('/UploadLog','LogController@upload_log');//发布日志
+Route::group(['middleware' => "session",
+    ],function () {
+    Route::post('/UploadLog','LogController@upload_log');//发布日志
 
-Route::get('/GetLog','LogController@get_log');//返回日志内容
+    Route::get('/GetLog','LogController@get_log');//返回日志内容
 
-Route::get('/DeleteLog','LogController@delete_log');//删除日志
+    Route::get('/DeleteLog','LogController@delete_log');//删除日志
+
+});
 
 
 /*登录*/
 Route::get('/login',['uses' => 'StudentController@login']);
 
-Route::post('/save',["uses" => "StudentController@save"]);//储存用户信息
+Route::post('/save',["uses" => "StudentController@save"]);//登陆用户验证
 
-Route::get('/admin',["uses" => "AdminController@admin"]);
+
 
 
 /*后台端*/
-Route::prefix("admin")->group(function (){
+Route::group([
+    "middleware" => "session",
+    "prefix" => "admin",
+            ],function(){
+    Route::post('/',["uses" => "AdminController@login"]);//管理员登录
+
     Route::post('/add',["uses" => "AdminController@add"]);//添加用户
 
     Route::post('/remove',["uses" => "AdminController@remove"]);//删除用户

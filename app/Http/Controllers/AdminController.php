@@ -8,9 +8,10 @@ use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
-    public function admin()
+    public function login(Request $request)
     {
-        return view("");
+        $account=$request->input("account");
+        $password=$request->input("password");
     }
 
     public function search(Request $request)//查询用户资料
@@ -81,6 +82,7 @@ class AdminController extends Controller
         $update_content=$request->input("update_content");
 
         Student::where("student",$student_id)->update($update_option,$update_content);//更新
+
 
     }
 }

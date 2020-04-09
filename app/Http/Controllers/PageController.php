@@ -11,15 +11,17 @@ class PageController extends Controller
 {
     public function editor(Request $request)
     {
-        $id = $request->input("id");
+        //$id = $request->session()->get("id");
+        $name=$request->session()->get("name");
         $message = $request->input("message");
         $max_id=DB::table("week_publication")->max("publication_id");
 
         //$date=(time()-(7*24*60*60));
-        $bool=DB::table("week_publication")->where("publication_id",$max_id)->update(
-            [$id => $message]
+        $num=DB::table("week_publication")->where("publication_id",$max_id)->update(
+            [$name => $message]
         );
-        return $bool;
+        if($num>0)return true;
+        return false;
     }
 
     public function  GetMessage()
@@ -38,9 +40,8 @@ class PageController extends Controller
             return response()->json(
                 [
                     "error_code" => 0,
-                    "data" => [
-                        "publication" => $publication_ids
-                    ]
+                    "week_message" => $publication_ids,
+
                 ]
             );
         }
@@ -49,8 +50,7 @@ class PageController extends Controller
             return response()->json(
                 [
                     "error_code" => 1,
-                    "data" => [
-                        ]
+                    "week_message" => [],
                 ]
             );
         }

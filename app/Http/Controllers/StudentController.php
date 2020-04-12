@@ -25,7 +25,7 @@ class StudentController extends Controller
             $group=$request->session()->get("group");
             $date=$request->session()->get("date");
             $permission=$request->session()->get("permission");
-            $SessionId=Session::getId();
+            //$SessionId=Session::getId();
             //return $SessionId;
             return response()->json(
                 [
@@ -60,7 +60,7 @@ class StudentController extends Controller
                 $request->session()->put("date",$date);
                 $request->session()->put("permission",$permission);
 
-
+                $session_id=Session::getId();
                 return response()->json(
                     [
                         "error_code" => 0,
@@ -71,10 +71,11 @@ class StudentController extends Controller
                                 "student_id" => $student,
                                 "date" => $date,
                                 "permission" => $permission,
+                                "session_id" => $session_id,
+
                             ],
                     ]
                 );
-                return 1;
             }
             else return response()->json(
                 [

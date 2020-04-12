@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Student;
+use App\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -10,13 +11,13 @@ class AdminController extends Controller
 {
     public function judge($account,$password)
     {
-        return DB::table("admin")::where("account",$account)->select("password")->get()==$password;
+        return Admin::where("account",$account)->value("password")==$password;
     }
     public function login(Request $request)
     {
         /*$account=$request->input("account");
         $password=$request->input("password");*/
-        if($request->session()->has("account")&&$request->session()->has("password"))
+        if($request->session()->has("admin_account")&&$request->session()->has("admin_password"))
         {
             return true;
         }
@@ -29,8 +30,8 @@ class AdminController extends Controller
             $password=$request->input("password");
             if($this->judge($account,$password))
             {
-                $request->session()->put("account",$account);
-                $request->session()->put("password",$password);
+                $request->session()->put("admin_account",$account);
+                $request->session()->put("admin_password",$password);
                 return true;
             }
             return false;

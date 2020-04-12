@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         /*自定义中间件*/
         'session' => \App\Http\Middleware\CheckSession::class,//检查是否设置session
+        'AdminSession' => \App\Http\Middleware\CheckAdminSession::class//检查是否设置管理员session
     ];
 }

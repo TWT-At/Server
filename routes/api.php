@@ -50,11 +50,12 @@ Route::post('/save',["uses" => "StudentController@save"]);//登陆用户验证
 
 
 /*后台端*/
+Route::post("/admin",["uses" => "AdminController@login"]);
 Route::group([
     "middleware" => "session",
     "prefix" => "admin",
             ],function(){
-    Route::post('/',["uses" => "AdminController@login"]);//管理员登录
+    //Route::post('/',["uses" => "AdminController@login"]);//管理员登录
 
     Route::post('/add',["uses" => "AdminController@add"]);//添加用户
 

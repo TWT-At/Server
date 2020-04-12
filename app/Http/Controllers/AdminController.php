@@ -8,10 +8,33 @@ use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
+    public function judge($account,$password)
+    {
+        return DB::table("admin")::where("account",$account)->select("password")->get()==$password;
+    }
     public function login(Request $request)
     {
-        $account=$request->input("account");
-        $password=$request->input("password");
+        /*$account=$request->input("account");
+        $password=$request->input("password");*/
+        if($request->session()->has("account")&&$request->session()->has("password"))
+        {
+            return true;
+        }
+        else{
+            $validate=$request->validate([
+               "account" => "required",
+                "password" => "required",
+            ]);
+            $account=$request->input("account");
+            $password=$request->input("password");
+            if($this->judge($account,$password))
+            {
+                $request->session()->put("account",$account);
+                $request->session()->put("password",$password);
+                return true;
+            }
+            return false;
+        }
     }
 
     public function search(Request $request)//查询用户资料
@@ -82,7 +105,6 @@ class AdminController extends Controller
         $update_content=$request->input("update_content");
 
         Student::where("student",$student_id)->update($update_option,$update_content);//更新
-
 
     }
 }

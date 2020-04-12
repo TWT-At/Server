@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Student;
 use Illuminate\Http\Request;
-use mysql_xdevapi\Session;
+use Illuminate\Support\Facades\Session;
+
 
 class StudentController extends Controller
 {
@@ -15,14 +16,17 @@ class StudentController extends Controller
 
     public function save(Request $request)
     {
+        //$request->session()->flush();
         if($request->session()->has("student_id"))
         {
             $id=$request->session()->get("id");
             $student_id=$request->session()->get("student_id");
             $name=$request->session()->get("name");
-            $group=$request->session()->get("group_name");
+            $group=$request->session()->get("group");
             $date=$request->session()->get("date");
             $permission=$request->session()->get("permission");
+            $SessionId=Session::getId();
+            //return $SessionId;
             return response()->json(
                 [
                     "error_code" => 0,
@@ -33,7 +37,7 @@ class StudentController extends Controller
                             "student_id" => $student_id,
                             "date" => $date,
                             "permission" => $permission,
-                        ],
+                        ]
                 ]
             );
         }

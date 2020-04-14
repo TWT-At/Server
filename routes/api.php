@@ -50,12 +50,14 @@ Route::post('/save',["uses" => "StudentController@save"]);//登陆用户验证
 
 
 /*后台端*/
-Route::post("/admin",["uses" => "AdminController@login"]);
+Route::post("/admin",["uses" => "AdminController@login"]);//管理员登录
 Route::group([
     "middleware" => "AdminSession",
     "prefix" => "admin",
             ],function(){
-    //Route::post('/',["uses" => "AdminController@login"]);//管理员登录
+    Route::get("/basic",["uses" => "AdminController@basic"]);//获取所有用户基本资料
+
+    Route::post('/complex',["uses" => "AdminController@complex"]);//通过post用户id获取用户相关所有信息
 
     Route::post('/add',["uses" => "AdminController@add"]);//添加用户
 

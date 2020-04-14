@@ -25,8 +25,9 @@ class StudentController extends Controller
             $group=$request->session()->get("group");
             $date=$request->session()->get("date");
             $permission=$request->session()->get("permission");
-            //$SessionId=Session::getId();
-            //return $SessionId;
+            $hour=$request->session()->get("hour");
+            $group_role=$request->session()->get("group_role");
+            $token=$request->session()->get("_token");
             return response()->json(
                 [
                     "error_code" => 0,
@@ -37,6 +38,9 @@ class StudentController extends Controller
                             "student_id" => $student_id,
                             "date" => $date,
                             "permission" => $permission,
+                            "group_role" =>$group_role,
+                            "hour" =>$hour,
+                            "_token" => $token,
                         ]
                 ]
             );
@@ -48,10 +52,12 @@ class StudentController extends Controller
                 $id=Student::where("student_id",$student)->value("id");
                 $name=Student::where("student_id",$student)->value("name");
                 $group=Student::where("student_id",$student)->value("group_name");
+                $group_role=Student::where("student_id",$student)->value("group_role");
                 $created_at=strtotime(Student::where("student_id",$student)->value("created_at"));
                 $permission=Student::where("student_id",$student)->value("permission");
                 $time=time();
                 $date=floor(($time-$created_at)/86400);
+                $hour=floor(($time-$created_at)/3600);
 
                 $request->session()->put("id",$id);
                 $request->session()->put("student_id",$student);
@@ -59,8 +65,9 @@ class StudentController extends Controller
                 $request->session()->put("group",$group);
                 $request->session()->put("date",$date);
                 $request->session()->put("permission",$permission);
+                $request->session()->put("group_role",$group_role);
+                $request->session()->put("hour",$hour);
 
-                $session_id=Session::getId();
                 return response()->json(
                     [
                         "error_code" => 0,
@@ -70,8 +77,10 @@ class StudentController extends Controller
                                 "group" => $group,
                                 "student_id" => $student,
                                 "date" => $date,
+                                "hour" =>$hour,
+                                "group_role" =>$group_role,
                                 "permission" => $permission,
-                                "session_id" => $session_id,
+
 
                             ],
                     ]
@@ -82,7 +91,9 @@ class StudentController extends Controller
                     "error_code" => 1,
                 ]
             );
+
         }
+
 
 
     }

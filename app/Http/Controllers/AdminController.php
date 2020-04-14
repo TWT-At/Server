@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Student;
 use App\Admin;
+use App\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -12,6 +13,8 @@ class AdminController extends Controller
     public function judge($account,$password)
     {
         return Admin::where("account",$account)->value("password")==$password;
+
+
     }
     public function login(Request $request)
     {
@@ -19,7 +22,9 @@ class AdminController extends Controller
         $password=$request->input("password");*/
         if($request->session()->has("admin_account")&&$request->session()->has("admin_password"))
         {
-            return true;
+            return response()->json([
+                "error_code" => 0,
+            ]);
         }
         else{
             $validate=$request->validate([
@@ -32,11 +37,67 @@ class AdminController extends Controller
             {
                 $request->session()->put("admin_account",$account);
                 $request->session()->put("admin_password",$password);
-                return true;
+                return response()->json([
+                    "error_code" => 0,
+                    ]
+                );
             }
-            return false;
+            return response()->json([
+                "error_code" => 1,
+            ]);
         }
     }
+    public function basic()
+    {
+        $basic=Student::all();
+        $information=array();
+        $i=0;
+        foreach ($basic as $value)
+        {
+            //$i=0;
+            $information[$i]["id"]=$value["id"];
+            $information[$i]["name"]=$value["name"];
+            $information[$i]["group"]=$value["group_name"];
+            $information[$i]["group_value"]=$value["group_role"];
+            $information[$i]["campus"]=$value["campus"];
+            $i++;
+
+        }
+        return response()->json([
+            "error_code" =>0,
+            "information" => $information,
+        ]);
+    }
+
+    public function complex(Request $request)//通过post用户id获取用户相关所有信息
+    {
+        $id=$request->input("id");
+        $student=Student::where("id",$id)->select("id","student_id","name","email","group_name","group_role","campus","permission")->get();
+        $created_at=strtotime(Student::where("id",$id)->value("created_at"));
+        $time=time();
+        $date=floor(($time-$created_at)/86400);
+        $hour=floor(($time-$created_at)/3600);
+        $student[0]["date"]=$date;
+        $student[0]["hour"]=$hour;
+
+        $project=Project::where("author_id",$id)->select("title","description","process")->get();
+        $project_created_at=Project::where("author_id",$id)->select("created_at")->get();
+        $i=0;
+        foreach ($project_created_at as $each_created_at)
+        {
+            $project_hour=floor(($time-strtotime($each_created_at["created_at"]))/3600);
+            $project[$i]["hour"]=$project_hour;
+            $i++;
+        }
+
+
+        return response()->json([
+            "error_code" => 0,
+            "student" => $student,
+            "project" => $project,
+        ]);
+    }
+
 
     public function search(Request $request)//查询用户资料
     {

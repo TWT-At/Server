@@ -10,8 +10,9 @@ This is my try to use the **Laravel** framework to rewrite a web project of **ba
 - 周报接口
 - 日志接口
 - 项目部署
-- 创建了API文档
-- 部分数据库设计
+- 更新了**API**文档
+- 更新了项目数据表的设计
+- 初步完成了管理员界面的接口
 
 ## Doing：
 

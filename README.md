@@ -26,5 +26,5 @@ This is my try to use the **Laravel** framework to rewrite a web project of **ba
 
 ## Interface：
 
-[接口文档**](https://www.showdoc.cc/KuangjuX?page_id=4216166309266237)
+[接口文档](https://www.showdoc.cc/KuangjuX?page_id=4216166309266237)
 

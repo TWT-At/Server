@@ -136,8 +136,13 @@ class AdminController extends Controller
 
     public function remove(Request $request)//删除用户
     {
-        $student_id=$request->input("student_id");
-        Student::destroy([$student_id]);
+        $id=$request->input("id");
+        //return $student_id;
+        $student=explode(";",$id);
+        Student::destroy($student);
+
+
+        //Student::destroy([$student_id]);
     }
 
     public function add(Request $request)//添加用户
@@ -147,6 +152,7 @@ class AdminController extends Controller
         $password=$request->input("password");
         $email=$request->input("email");
         $group_name=$request->input("group_name");
+
         $test=DB::table("student")->insert([
                 [
                     "name" => $name,
@@ -162,11 +168,58 @@ class AdminController extends Controller
 
     public function update(Request $request)
     {
-        $student_id=$request->input("student_id");//这里写简单一点，限制只能输入学生id进行修改
-        $update_option=$request->input("update_option");
-        $update_content=$request->input("update_content");
+        $validate=$request->validate([
+            "id" => "required",
+            "student_id" => "required",
+            "name" => "required",
+            "group" => "required",
+            "group_role" => "required",
+            "campus" =>"required",
+            "email" =>"required",
+            "password" => "required",
+        ]);
+        if(!$validate)
+        {
+            return response()->json(
+                [
+                    "error_code" => 1,
+                    "error_message" => "必须输入全部信息",
+                ]
+            );
+        }
+        else{
+            $id=$request->input("id");
+            $student_id=$request->input("student_id");
+            $name=$request->input("name");
+            $group_name=$request->input("group");
+            $group_role=$request->input("group_role");
+            $campus=$request->input("campus");
+            $email=$request->input("email");
+            $password=$request->input("password");
 
-        Student::where("student",$student_id)->update($update_option,$update_content);//更新
+            $student=new Student(
+            [
+                "id" => $id,
+                "student_id" => $student_id,
+                "name" => $name,
+                "group_name" => $group_name ,
+                "group_role" => $group_role,
+                "campus" => $campus,
+                "email" => $email,
+                "password" => $password,
+            ]
+            );
+
+            $student->save();
+
+        }
+
+        //$id=$request->input("id");//这里写简单一点，限制只能输入学生id进行修改
+        //$update_option=$request->input("update_option");
+        //$update_content=$request->input("update_content");
+
+
+        //Student::where("student",$student_id)->update($update_option,$update_content);//更新
 
     }
 }

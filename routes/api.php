@@ -66,6 +66,8 @@ Route::group([
     Route::post("/search",["uses" => "AdminController@search"]);//查询用户
 
     Route::post("/update",["uses" => "AdminController@update"]);//更新用户资料
+
+    Route::post("/announce",["uses" => "AdminController@announce"]);//管理员发布公告
 });
 
 /*

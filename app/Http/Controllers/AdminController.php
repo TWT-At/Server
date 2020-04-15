@@ -147,23 +147,21 @@ class AdminController extends Controller
 
     public function add(Request $request)//添加用户
     {
-        $name=$request->input("name");
-        $student_id=$request->input("student_id");
-        $password=$request->input("password");
-        $email=$request->input("email");
-        $group_name=$request->input("group_name");
+        $data=$request->all()["data"];
+        foreach ($data as $EachMember)
+        {
+            $student=new Student;
 
-        $test=DB::table("student")->insert([
-                [
-                    "name" => $name,
-                    "student_id" => $student_id,
-                    "password" => $password,
-                    "email" => $email,
-                    "group_name" => $group_name,
-                    "permission" => 0,
-                ],
-        ]);
-        return $test;
+            $student->name=$EachMember["name"];
+            $student->student_id=$EachMember["student_id"];
+            $student->password=$EachMember["password"];
+            $student->group_name=$EachMember["group"];
+            $student->group_role=$EachMember["group_role"];
+            $student->email=$EachMember["email"];
+            $student->campus=$EachMember["campus"];
+            $student->permission=0;
+            $student->save();
+        }
     }
 
     public function update(Request $request)
@@ -214,12 +212,12 @@ class AdminController extends Controller
 
         }
 
-        //$id=$request->input("id");//这里写简单一点，限制只能输入学生id进行修改
-        //$update_option=$request->input("update_option");
-        //$update_content=$request->input("update_content");
 
 
-        //Student::where("student",$student_id)->update($update_option,$update_content);//更新
+    }
+
+    public function announce(Request $request)//管理员发布公告
+    {
 
     }
 }

@@ -6,23 +6,17 @@
 
 This is my try to use the **Laravel** framework to rewrite a web project of **backend** development named AT in the **TWT**.
 
-## Finished：
+## Process：
 
-- 登录页面的接口
-- 周报接口
-- 日志接口
-- 项目部署
-- 更新了**API**文档
-- 更新了项目数据表的设计
-- 初步完成了管理员界面的接口
-
-## Doing：
-
-- 系统后台逻辑设计
-
-- 和前端商议API
-
-  
+- [x] 用户主页
+- [x] 周报
+- [x] 日志
+- [x] 管理员主页接口
+- [x] 管理员增加成员
+- [x] 管理员删除成员
+- [x] 管理员更新成员信息
+- [ ] 管理员发起公告
+- [ ] 项目管理
 
 ## Interface：
 

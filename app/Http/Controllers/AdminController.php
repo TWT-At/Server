@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Student;
 use App\Admin;
 use App\Project;
+use App\Announce;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -166,58 +167,40 @@ class AdminController extends Controller
 
     public function update(Request $request)
     {
-        $validate=$request->validate([
-            "id" => "required",
-            "student_id" => "required",
-            "name" => "required",
-            "group" => "required",
-            "group_role" => "required",
-            "campus" =>"required",
-            "email" =>"required",
-            "password" => "required",
-        ]);
-        if(!$validate)
-        {
-            return response()->json(
-                [
-                    "error_code" => 1,
-                    "error_message" => "必须输入全部信息",
-                ]
-            );
-        }
-        else{
-            $id=$request->input("id");
-            $student_id=$request->input("student_id");
+
+            $id=intval($request->input("id"));
+
+            //$id=$request->input("id");
+            /*$student_id=$request->input("student_id");
             $name=$request->input("name");
             $group_name=$request->input("group");
             $group_role=$request->input("group_role");
             $campus=$request->input("campus");
             $email=$request->input("email");
-            $password=$request->input("password");
-
-            $student=new Student(
-            [
-                "id" => $id,
-                "student_id" => $student_id,
-                "name" => $name,
-                "group_name" => $group_name ,
-                "group_role" => $group_role,
-                "campus" => $campus,
-                "email" => $email,
-                "password" => $password,
-            ]
-            );
-
-            $student->save();
-
-        }
+            $password=$request->input("password");*/
 
 
+
+            $student=Student::find($id);
+            $student->update($request->all());
 
     }
 
     public function announce(Request $request)//管理员发布公告
     {
+        $validate=$request->validate([
+           "title" => "required",
+            "content" => "required",
+            "post_group" => "required",
+        ]);
+        if($validate)
+        {
+            $announce=new Announce;
+            $announce->title=$request->input("title");
+            $announce->content=$request->input("content");
+            $announce->post_group=$request->input("post_group");
 
+            $announce->save();
+        }
     }
 }

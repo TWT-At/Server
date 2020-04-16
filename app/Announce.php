@@ -4,11 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Admin extends Model
+class Announce extends Model
 {
-    protected $table="admin";
+    protected $table="announce";
     protected $primaryKey="id";
-
 
 
     public $timestamps=false;

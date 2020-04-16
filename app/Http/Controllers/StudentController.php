@@ -40,7 +40,7 @@ class StudentController extends Controller
                             "permission" => $permission,
                             "group_role" =>$group_role,
                             "hour" =>$hour,
-                            "_token" => $token,
+                            "token" => $token,
                         ]
                 ]
             );
@@ -80,6 +80,7 @@ class StudentController extends Controller
                                 "hour" =>$hour,
                                 "group_role" =>$group_role,
                                 "permission" => $permission,
+                                "token" => $request->session()->get("_token"),
 
 
                             ],
@@ -92,7 +93,9 @@ class StudentController extends Controller
                 ]
             );
 
+
         }
+
 
 
 

@@ -23,6 +23,7 @@ class Kernel extends HttpKernel
         /*添加session中间件*/
         \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\EnableCrossRequestMiddleware::class,//新增跨域中间件
     ];
 
     /**

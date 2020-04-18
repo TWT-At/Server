@@ -92,8 +92,6 @@ class StudentController extends Controller
                     "error_code" => 1,
                 ]
             );
-
-
         }
 
 

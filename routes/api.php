@@ -17,6 +17,22 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::options('/{all}', function () {
+    return response('');
+})->where(['all' => '([a-zA-Z0-9-]|_|/)+']);//屏蔽options请求
+
+
+Route::group([
+    'middleware' => 'session',
+    'prefix' => 'user'
+],function (){
+   Route::post('/image' ,["uses" => "AlterController@image"]);//上传图片
+
+   Route::post('/password',["uses" => "AlterController@password"]);//修改密码
+
+    Route::post('email_password',["uses" => "AlterController@email_password"]);//修改邮箱密码
+});
 /*周报*/
 Route::group([
     'middleware' => "session",

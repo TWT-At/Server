@@ -24,8 +24,6 @@ class CheckSession
         else{
             return response()->json([
                 "error_code" => 401,
-                "_token" =>$request->header("_token"),
-                "_token2" => $request->session()->get("_token"),
             ]);
         }
     }

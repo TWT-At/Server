@@ -22,6 +22,9 @@ Route::options('/{all}', function () {
     return response('');
 })->where(['all' => '([a-zA-Z0-9-]|_|/)+']);//屏蔽options请求
 
+/*Route::get('/filetest',function (){
+    return view("user.edit");
+});*/
 
 Route::group([
     'middleware' => 'session',

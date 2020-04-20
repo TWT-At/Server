@@ -10,12 +10,12 @@ This is my try to use the **Laravel** framework to rewrite a web project of **ba
 
 ### 用户页面
 
-- [ ] 用户主页
-- [ ] 周报
-- [ ] 日志
-- [ ] 用户头像更换
-- [ ] 用户头像展示
-- [ ] 用户密码更改
+- [x] 用户主页
+- [x] 周报
+- [x] 日志
+- [x] 用户头像更换
+- [x] 用户头像展示
+- [x] 用户密码更改
 - [ ] 用户邮箱密码更改
 
 #### 项目管理

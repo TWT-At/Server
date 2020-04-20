@@ -24,18 +24,41 @@ Route::options('/{all}', function () {
 
 /*Route::get('/filetest',function (){
     return view("user.edit");
-});*/
+});//文件上传测试*/
 
 Route::group([
     'middleware' => 'session',
     'prefix' => 'user'
 ],function (){
-   Route::post('/image' ,["uses" => "AlterController@image"]);//上传图片
+    Route::post('/UpdateImage' ,["uses" => "AlterController@image"]);//上传图片
 
-   Route::post('/password',["uses" => "AlterController@password"]);//修改密码
+    Route::get('/GetAvatar',["uses" => "AlterController@GetAvatar"]);//获取用户头像
 
-    Route::post('email_password',["uses" => "AlterController@email_password"]);//修改邮箱密码
+    Route::post('/UpdatePassword',["uses" => "AlterController@password"]);//修改密码
+
+    Route::post('/UpdateEmailPassword',["uses" => "AlterController@email_password"]);//修改邮箱密码
 });
+
+//项目管理（组员端)
+Route::group([
+    'middleware' => 'session',
+    'prefix' => 'project'
+],function (){
+
+    Route::post('/CreateProject',['uses' => 'ProjectController@CreateProject']);//创建新项目
+
+    Route::post('/AddMember',['uses' => 'ProjectController@AddMember']);//为项目添加成员
+
+    Route::post('/CreateTask',['uses' => 'ProjectController@CreateTask']);//创建任务
+
+    Route::get('/ShowMyProject',['uses' => 'ProjectController@ShowMyProject']);//获取项目
+
+    Route::get('/ShowBasicProject',["uses" => "ProjectController@ShowBasicProject"]);//获取项目基础信息
+
+    Route::post('/ShowSpecifiedProject',["uses" => "ProjectController@ShowSpecifiedProject"]);//获取指定项目的信息
+});
+
+
 /*周报*/
 Route::group([
     'middleware' => "session",

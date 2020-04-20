@@ -33,7 +33,7 @@ class AlterController extends Controller
                 $type=$avatar->getClientMimeType();
                 $realPath=$avatar->getRealPath();
                 $file_new_name=date('Y-m-d-H-i-s').'-'.uniqid().'.'.$ext;
-                Storage::disk('public')->put($file_new_name,file_get_contents($realPath));
+                Storage::disk('image')->put($file_new_name,file_get_contents($realPath));
 
                 $student=Student::find($id);
                 $student->avatar=$file_new_name;
@@ -41,5 +41,15 @@ class AlterController extends Controller
 
             }
         }
+    }
+
+    public function GetAvatar(Request $request)//用户头像展示
+    {
+        $id=$request->session()->get("id");
+
+        $file_name=Student::where("id",$id)->value("avatar");
+        $file_path="image/".$file_name;
+        $avatar=Storage::get($file_path);
+        return $avatar;
     }
 }

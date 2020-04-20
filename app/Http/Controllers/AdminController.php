@@ -169,21 +169,8 @@ class AdminController extends Controller
     {
 
             $id=intval($request->input("id"));
-
-            //$id=$request->input("id");
-            /*$student_id=$request->input("student_id");
-            $name=$request->input("name");
-            $group_name=$request->input("group");
-            $group_role=$request->input("group_role");
-            $campus=$request->input("campus");
-            $email=$request->input("email");
-            $password=$request->input("password");*/
-
-
-
             $student=Student::find($id);
             $student->update($request->all());
-
     }
 
     public function announce(Request $request)//管理员发布公告

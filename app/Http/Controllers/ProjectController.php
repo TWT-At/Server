@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Project;
+use App\ProjectLog;
 use App\ProjectMember;
 use App\Task;
+use App\TaskLog;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -85,17 +87,42 @@ class ProjectController extends Controller
 
     public function ShowMyProject(Request $request)//展示我的项目
     {
+         $id=$request->session()->get("id");
+         $project_ids=ProjectMember::where("user_id",$id)->select("project_id")->get();
+         $data=array();
+         $i=0;
+         foreach ($project_ids as $value)
+         {
+            $project_id=$value["project_id"];
+            $data[$i]=Project::where("id",$project_id)->select("id","name","title","created_at")->get();
+            $i++;
+         }
+
+         if($data){
+             return response()->json([
+                 "error_code" => 0,
+                 "data" => $data,
+             ]);
+         }
+
+         else{
+             return response()->json([
+                 "error_code" =>1,
+                 ]);
+         }
+
 
     }
 
     public function ShowBasicProject()//展示基础项目
     {
-        $BasicProject=Project::where('id','>',0)->select('name','title');
-        if($BasicProject)
+        $BasicProjects=Project::where('id','>',0)->select('id','name','title')->get();
+
+        if($BasicProjects)
         {
             return response()->json([
                "error_code" => 0,
-               "data" => $BasicProject,
+               "data" => $BasicProjects,
             ]);
         }
         else{
@@ -109,10 +136,33 @@ class ProjectController extends Controller
     {
         $project_id=$request->input("project_id");
 
-        $title=Project::where("id",$project_id)->value("title");
-        $description=Project::where("id",$project_id)->value("description");
-        $process=Project::where("id",$project_id)->value("process");
-        $member=ProjectMember::where("project_id",$project_id)->select("name","created_at")->get();
+        $title=Project::where("id",$project_id)->value("title");//项目标题
+        $description=Project::where("id",$project_id)->value("description");//项目描述
+        $process=Project::where("id",$project_id)->value("process");//项目进程
+        $member=ProjectMember::where("project_id",$project_id)->select("name","group_name","permission","created_at")->get();//获取项目成员、组别、权限、加入时间
+
+        $task=Task::where("project_id",$project_id)->select("name","title","description","process","created_at")->get();
+
+        $log=ProjectLog::where("project_id",$project_id)->select("name","description","update_at")->get();
+
+        $data["title"]=$title;
+        $data["description"]=$description;
+        $data["process"]=$process;
+        $data["member"]=$member;
+        $data["task"]=$task;
+        $data["log"]=$log;
+        if($data)
+        {
+            return response()->json([
+                "error_code" => 0,
+                "data" => $data,
+            ]);
+        }
+        else{
+            return response()->json([
+                "error_code" => 1,
+            ]);
+        }
 
     }
 }

@@ -23,8 +23,10 @@ This is my try to use the **Laravel** framework to rewrite a web project of **ba
 - [x] 创建项目
 - [x] 添加成员
 - [x] 创建任务
-- [ ] 返回基础项目接口
-- [ ] 返回特定项目接口
+- [x] 返回我的项目接口
+- [x] 返回基础项目接口
+- [x] 返回特定项目接口
+- [x] 项目数据表整体设计完成
 
 
 ### 管理员

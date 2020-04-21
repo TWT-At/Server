@@ -51,7 +51,7 @@ Route::group([
 
     Route::post('/CreateTask',['uses' => 'ProjectController@CreateTask']);//创建任务
 
-    Route::get('/ShowMyProject',['uses' => 'ProjectController@ShowMyProject']);//获取项目
+    Route::get('/ShowMyProject',['uses' => 'ProjectController@ShowMyProject']);//获取我的项目基本信息
 
     Route::get('/ShowBasicProject',["uses" => "ProjectController@ShowBasicProject"]);//获取项目基础信息
 

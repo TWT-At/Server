@@ -56,6 +56,10 @@ Route::group([
     Route::get('/ShowBasicProject',["uses" => "ProjectController@ShowBasicProject"]);//获取项目基础信息
 
     Route::post('/ShowSpecifiedProject',["uses" => "ProjectController@ShowSpecifiedProject"]);//获取指定项目的信息
+
+    Route::post('/DelayTask',["uses" => "ProjectController@DelayTask"]);//延迟任务
+
+    Route::post("/DeleteTask",["uses" => "ProjectController@DeleteTask"]);//删除任务
 });
 
 

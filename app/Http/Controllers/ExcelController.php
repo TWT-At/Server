@@ -45,7 +45,7 @@ class ExcelController extends Controller
            $group_name=preg_match('/^([\xe4-\xe9][\x80-\xbf]{2}){2,4}$/',$value["group_name"]);
            $group_role=preg_match('/^([\xe4-\xe9][\x80-\xbf]{2}){2,4}$/',$value["group_role"]);
            $campus=preg_match('/^([\xe4-\xe9][\x80-\xbf]{2}){2,4}$/',$value["campus"]);
-           if(!($email||$name||$student_id||$group_name||$group_role||$campus))
+           if(!($email&&$name&&$student_id&&$group_name&&$group_role&&$campus))
            {
                $flag=false;
            }

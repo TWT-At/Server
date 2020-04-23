@@ -22,9 +22,9 @@ Route::options('/{all}', function () {
     return response('');
 })->where(['all' => '([a-zA-Z0-9-]|_|/)+']);//屏蔽options请求
 
-/*Route::get('/filetest',function (){
+Route::get('/filetest',function (){
     return view("user.edit");
-});//文件上传测试*/
+});//文件上传测试
 
 Route::group([
     'middleware' => 'session',
@@ -98,7 +98,7 @@ Route::post('/save',["uses" => "StudentController@save"]);//登陆用户验证
 /*后台端*/
 Route::post("/admin",["uses" => "AdminController@login"]);//管理员登录
 Route::group([
-    "middleware" => "AdminSession",
+    //"middleware" => "AdminSession",
     "prefix" => "admin",
             ],function(){
     Route::get("/basic",["uses" => "AdminController@basic"]);//获取所有用户基本资料
@@ -106,6 +106,8 @@ Route::group([
     Route::post('/complex',["uses" => "AdminController@complex"]);//通过post用户id获取用户相关所有信息
 
     Route::post('/add',["uses" => "AdminController@add"]);//添加用户
+
+    Route::post('/AddExcel',["uses" => "ExcelController@AddExcel"]);//通过excel导入数据
 
     Route::post('/remove',["uses" => "AdminController@remove"]);//删除用户
 

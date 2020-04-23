@@ -22,6 +22,7 @@ This is my try to use the **Laravel** framework to rewrite a web project of **ba
 
 - [x] 创建项目
 - [x] 添加成员
+- [x] 增加了数据正则匹配检查功能
 - [x] 创建任务
 - [x] 返回我的项目接口
 - [x] 返回基础项目接口
@@ -38,6 +39,8 @@ This is my try to use the **Laravel** framework to rewrite a web project of **ba
 - [x] 管理员删除成员（支持批量删除）
 - [x] 管理员更新成员信息
 - [x] 管理员发起公告
+- [x] 增加了Excel文件导入数据成员功能
+- [x] 增加了数据正则匹配检查功能
 - [ ] 项目管理
 
 

@@ -149,6 +149,13 @@ class AdminController extends Controller
     public function add(Request $request)//添加用户
     {
         $data=$request->all()["data"];
+        if(!$this->CheckData($data))
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "输入信息格式不正确",
+            ]);
+        }
         foreach ($data as $EachMember)
         {
             $student=new Student;
@@ -163,6 +170,29 @@ class AdminController extends Controller
             $student->permission=0;
             $student->save();
         }
+
+        return response()->json([
+            "error_code" => 0,
+        ]);
+    }
+
+    public function CheckData($data)
+    {
+        $flag=true;
+        foreach ($data as $EachMember)
+        {
+            $email=filter_var($EachMember["email"],FILTER_VALIDATE_EMAIL);
+            $name=preg_match('/^([\xe4-\xe9][\x80-\xbf]{2}){2,4}$/',$EachMember["name"]);
+            $student_id=preg_match('/^\d{10}$/',$EachMember["student_id"]);
+            $group_name=preg_match('/^([\xe4-\xe9][\x80-\xbf]{2}){2,4}$/',$EachMember["group_name"]);
+            $group_role=preg_match('/^([\xe4-\xe9][\x80-\xbf]{2}){2,4}$/',$EachMember["group_role"]);
+            $campus=preg_match('/^([\xe4-\xe9][\x80-\xbf]{2}){2,4}$/',$EachMember["campus"]);
+            if(!($email||$name||$student_id||$group_name||$group_role||$campus))
+            {
+                $flag=false;
+            }
+        }
+        return $flag;
     }
 
     public function update(Request $request)

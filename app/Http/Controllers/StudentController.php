@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Student;
+use App\WeekPubliction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 
@@ -28,6 +30,7 @@ class StudentController extends Controller
             $hour=$request->session()->get("hour");
             $group_role=$request->session()->get("group_role");
             $token=$request->session()->get("_token");
+
             return response()->json(
                 [
                     "error_code" => 0,
@@ -95,13 +98,43 @@ class StudentController extends Controller
         }
 
 
-
-
     }
+
+
     public function judge($student_id,$password)
     {
         return Student::where("student_id",$student_id)->value('password')==$password;
     }
 
+
+    public function getinfo(Request $request)
+    {
+        $id=$request->session()->get("id");
+        $student_id=$request->session()->get("student_id");
+        $name=$request->session()->get("name");
+        $group=$request->session()->get("group");
+        $date=$request->session()->get("date");
+        $permission=$request->session()->get("permission");
+        $hour=$request->session()->get("hour");
+        $group_role=$request->session()->get("group_role");
+        $token=$request->session()->get("_token");
+
+        return response()->json(
+            [
+                "error_code" => 0,
+                "data" =>
+                    [
+                        "name" => $name,
+                        "group" => $group,
+                        "student_id" => $student_id,
+                        "date" => $date,
+                        "permission" => $permission,
+                        "group_role" =>$group_role,
+                        "hour" =>$hour,
+                        "token" => $token,
+                    ]
+            ]
+        );
+    }
 
 }

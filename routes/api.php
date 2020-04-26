@@ -37,6 +37,24 @@ Route::group([
     Route::post('/UpdatePassword',["uses" => "AlterController@password"]);//修改密码
 
     Route::post('/UpdateEmailPassword',["uses" => "AlterController@email_password"]);//修改邮箱密码
+
+    Route::get("/GetMessage",["uses" => "MessageController@GetMessage"]);//获取消息
+
+    Route::post('/UpdateRead',["uses" => "MessageController@UpdateRead"]);//更新消息已读情况
+
+    Route::get('/GetPM',["uses" => "UserController@GetPM"]);//获取产品组成员信息
+
+    Route::get('/GetUI',["uses" => "UserController@GetUI"]);//获取设计组成员信息
+
+    Route::get('/GetWeb',["uses" => "UserController@GetWeb"]);//获取前端组成员信息
+
+    Route::get("/GetBackEnd",["uses" => "UserController@GetBackEnd"]);//获取后端组成员信息
+
+    Route::get('/GetAndroid',["uses" => "UserController@GetAndroid"]);//获取安卓组成员信息
+
+    Route::get('/GetIOS',["uses" => "UserController@GetIOS"]);//获取IOS组成员信息
+
+    Route::post('/GetComplex',["uses" => "UserController@GetComplex"]);//获取详细信息
 });
 
 //项目管理（组员端)
@@ -60,6 +78,8 @@ Route::group([
     Route::post('/DelayTask',["uses" => "ProjectController@DelayTask"]);//延迟任务
 
     Route::post("/DeleteTask",["uses" => "ProjectController@DeleteTask"]);//删除任务
+
+
 });
 
 
@@ -92,13 +112,17 @@ Route::get('/login',['uses' => 'StudentController@login']);
 
 Route::post('/save',["uses" => "StudentController@save"]);//登陆用户验证
 
+Route::group(["middleware" => "session"],function (){
+    Route::get('/getinfo',["uses" => "StudentController@getinfo"]);
+});
+
 
 
 
 /*后台端*/
 Route::post("/admin",["uses" => "AdminController@login"]);//管理员登录
 Route::group([
-    //"middleware" => "AdminSession",
+    "middleware" => "AdminSession",
     "prefix" => "admin",
             ],function(){
     Route::get("/basic",["uses" => "AdminController@basic"]);//获取所有用户基本资料

@@ -19,8 +19,7 @@ class AdminController extends Controller
     }
     public function login(Request $request)
     {
-        /*$account=$request->input("account");
-        $password=$request->input("password");*/
+
         if($request->session()->has("admin_account")&&$request->session()->has("admin_password"))
         {
             return response()->json([
@@ -48,6 +47,7 @@ class AdminController extends Controller
             ]);
         }
     }
+
     public function basic()
     {
         $basic=Student::all();

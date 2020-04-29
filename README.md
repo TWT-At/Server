@@ -43,9 +43,16 @@ This is my try to use the **Laravel** framework to rewrite a web project of **ba
 - [x] 增加了数据正则匹配检查功能
 - [ ] 项目管理
 
+### 消息
 
+- [x] 项目信息
+- [x] 系统消息
+- [x] 消息公告
+- [ ] 会议信息
+- [ ] 讨论消息
+- [ ] 云盘共享
 
 ## Interface：
 
-[接口文档](https://www.showdoc.cc/KuangjuX?page_id=4216166309266237)
+[接口文档](https://www.showdoc.cc/KuangjuX)
 

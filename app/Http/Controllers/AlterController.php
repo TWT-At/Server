@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Message;
 use App\Student;
 
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ class AlterController extends Controller
         $student=Student::find($id);
         $student->password=$password;
         $student->save();
+        $this->PostToMessage($id,"【账号基本信息变动】","更改密码");
     }
 
     public function image(Request $request)
@@ -28,16 +30,30 @@ class AlterController extends Controller
             $avatar=$request->file("avatar");
             if($avatar->isValid())
             {
-                $oragnalName=$avatar->getClientOriginalName();
                 $ext=$avatar->getClientOriginalExtension();
                 $type=$avatar->getClientMimeType();
-                $realPath=$avatar->getRealPath();
-                $file_new_name=date('Y-m-d-H-i-s').'-'.uniqid().'.'.$ext;
-                Storage::disk('image')->put($file_new_name,file_get_contents($realPath));
+                $Type=explode("/",$type)[0];
+                if($Type=="image")
+                {
+                    $realPath=$avatar->getRealPath();
+                    $file_new_name=date('Y-m-d-H-i-s').'-'.uniqid().'.'.$ext;
+                    Storage::disk('image')->put($file_new_name,file_get_contents($realPath));
 
-                $student=Student::find($id);
-                $student->avatar=$file_new_name;
-                $student->save();
+                    $student=Student::find($id);
+                    $student->avatar=$file_new_name;
+                    $student->save();
+                    return response()->json([
+                        "error_code" => 0,
+                    ]);
+
+                }
+
+                else{
+                    return response()->json([
+                        "error_code" => 1,
+                        "message" => "上传失败，不是可上传的文件类型",
+                    ]);
+                }
 
             }
         }
@@ -51,5 +67,16 @@ class AlterController extends Controller
         $file_path="image/".$file_name;
         $avatar=Storage::get($file_path);
         return $avatar;
+    }
+
+    public function PostToMessage($id,$title,$message)
+    {
+        $Message=new Message([
+            "user_id" => $id,
+            "type" => "【系统消息】",
+            "title" => $title,
+            "message"=> $message
+        ]);
+        $Message->save();
     }
 }

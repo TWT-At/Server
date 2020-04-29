@@ -10,7 +10,7 @@ class MessageController extends Controller
     public function GetMessage(Request $request)
     {
         $user_id=$request->session()->get("id");
-        $message=Message::where("user_id",$user_id)->select("id","message","read","created_at")->get();
+        $message=Message::where("user_id",$user_id)->select("id","title","type","message","read","created_at")->get();
         if($message)
         {
             return response()->json([

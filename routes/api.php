@@ -69,6 +69,8 @@ Route::group([
 
     Route::post('/CreateTask',['uses' => 'ProjectController@CreateTask']);//创建任务
 
+    Route::post('/RemoveMember',["uses" => "ProjectController@RemoveMember"]);//移除成员
+
     Route::get('/ShowMyProject',['uses' => 'ProjectController@ShowMyProject']);//获取我的项目基本信息
 
     Route::get('/ShowBasicProject',["uses" => "ProjectController@ShowBasicProject"]);//获取项目基础信息
@@ -145,7 +147,7 @@ Route::group([
 /*
  * View OF Route
  * */
-Route::get('at/main',function (){
+/*Route::get('at/main',function (){
     return view('main');
 });
 
@@ -160,4 +162,4 @@ Route::get('at/description',function (){
 
 Route::get("at/editor",function (){
     return view("student.editor");
-});
+});*/

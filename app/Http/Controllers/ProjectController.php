@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Message;
 use App\Project;
 use App\ProjectLog;
 use App\ProjectMember;
@@ -48,6 +49,9 @@ class ProjectController extends Controller
         ]);//增加日志
 
         $projectLog->save();
+        $message=$name."创建了项目";
+
+        $this->PostToMessage($project_id,"创建项目",$message);
 
     }
 
@@ -79,8 +83,10 @@ class ProjectController extends Controller
             ]);
 
             $ProjectLog->save();//更新项目日志
-
             $i++;//循坏
+
+            $message=$request->session()->get("name").'添加了成员'.$name;
+            $this->PostToMessage($project_id,"人员加入",$message);
         }
     }
 
@@ -107,8 +113,10 @@ class ProjectController extends Controller
             "name" => $name,
             "description" => $name."发起任务【".$title."】",
         ]);
+        $message=$name."发起任务【".$title."】";
 
         $ProjectLog->save();//更新项目日志
+        $this->PostToMessage($project_id,"创建任务",$message);
     }
 
     public function ShowMyProject(Request $request)//展示我的项目
@@ -213,8 +221,11 @@ class ProjectController extends Controller
             "description" => "延迟任务【".$TaskTitle."】"."完结时间从【".$oldDeadline."】"."延期至【".$deadline."】"
             ."因为【".$reason."】",
         ]);
+        $message="延迟任务【".$TaskTitle."】"."完结时间从【".$oldDeadline."】"."延期至【".$deadline."】"
+            ."因为【".$reason."】";
 
         $ProjectLog->save();
+        $this->PostToMessage($project_id,"延迟任务",$message);
     }
 
     public function DeleteTask(Request $request)
@@ -225,7 +236,7 @@ class ProjectController extends Controller
 
         $TaskTitle=Task::where("id",$TaskID)->value("title");
 
-
+        $message="删除任务【".$TaskTitle."】"."删除原因为【".$reason."】";
 
         $task=Task::find($TaskID);
         $task->delete();
@@ -238,9 +249,38 @@ class ProjectController extends Controller
             ]);
 
             $ProjectLog->save();
+            $this->PostToMessage($project_id,"删除任务",$message);
         }
 
+    }
 
+    public function RemoveMember(Request $request)
+    {
+        $project_id=$request->input("project_id");
+        $name=$request->input("name");
+        $user_id=$request->input("user_id");
+        $reason=$request->input("reason");
 
+        $id=ProjectMember::where(["project" => $project_id,"user_id" => $user_id])->value("id");
+        ProjectMember::destroy([$id]);
+        $message="删除成员【".$name."】删除原因为【".$reason."】";
+        $this->PostToMessage($project_id,"人员退出",$message);
+    }
+
+    public function PostToMessage($project_id,$title,$message)
+    {
+        $IDGroup=ProjectMember::where("project",$project_id)->select("user_id")->get();
+        foreach ($IDGroup as $EachArray)
+        {
+            $user_id=$EachArray["user_id"];
+            $Message=new Message([
+                "user_id" => $user_id,
+                "type" => "【项目信息】",
+                "title" => $title,
+                "message" => $message,
+                "read" => 0
+            ]);
+            $Message->save();
+        }
     }
 }

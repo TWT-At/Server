@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Message;
 use App\Student;
 use App\Admin;
 use App\Project;
@@ -218,6 +219,32 @@ class AdminController extends Controller
             $announce->post_group=$request->input("post_group");
 
             $announce->save();
+            $this->PostToMessage($request->input("title"),$request->input("content"),$request->input("post_group"));
+            return response()->json([
+                "error_code" => 0,
+            ]);
         }
+        return response()->json([
+            "error_code" => 1,
+        ]);
+    }
+
+    public function PostToMessage($title,$content,$post_group)
+    {
+        $IDGroup=Student::where("group_name",$post_group)->select("id")->get();
+        foreach ($IDGroup as $EachArray)
+        {
+            $id=$EachArray["id"];
+            $Message=new Message([
+                "user_id" => $id,
+                "type" => "【消息公告】",
+                "title" => $title,
+                "message" => $content,
+                "read" => 0,
+            ]);
+
+            $Message->save();
+        }
+
     }
 }

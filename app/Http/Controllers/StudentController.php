@@ -124,6 +124,7 @@ class StudentController extends Controller
                 "error_code" => 0,
                 "data" =>
                     [
+                        "id" => $id,
                         "name" => $name,
                         "group" => $group,
                         "student_id" => $student_id,

@@ -129,6 +129,8 @@ class ProjectController extends Controller
          {
             $project_id=$value["project_id"];
             $data[$i]=Project::where("id",$project_id)->select("id","name","title","created_at")->get();
+            $rate=$this->CalculateProjectRate($project_id);
+            $data[$i]["rate"]=$rate;
             $i++;
          }
 
@@ -150,7 +152,12 @@ class ProjectController extends Controller
 
     public function ShowBasicProject()//展示基础项目
     {
-        $BasicProjects=Project::where('id','>',0)->select('id','name','title')->get();
+        $BasicProjects=Project::where('id','>',0)->select('id','name','title','created_at')->get();
+        for ($i=0;$i<count($BasicProjects,0);$i++)
+        {
+            $rate=$this->CalculateProjectRate($i+1);
+            $BasicProjects[$i]["rate"]=$rate;
+        }
 
         if($BasicProjects)
         {
@@ -254,6 +261,15 @@ class ProjectController extends Controller
 
     }
 
+    public function FinishTask(Request $request)
+    {
+        $TaskID=$request->input("task_id");
+        $process="Finished";
+        $Task=Task::find($TaskID);
+        $Task->process=$process;
+        $Task->save();
+    }
+
     public function RemoveMember(Request $request)
     {
         $project_id=$request->input("project_id");
@@ -282,5 +298,22 @@ class ProjectController extends Controller
             ]);
             $Message->save();
         }
+    }
+
+    public function CalculateProjectRate($project_id)
+    {
+        $Task=Task::where('project_id',$project_id)->select('id','process')->get();
+        $sum=0;
+        $finished=0;
+        foreach ($Task as $EachTask)
+        {
+            $sum++;
+            if($EachTask["process"]=="Finished")
+            {
+                $finished++;
+            }
+        }
+
+        return ($finished/$sum);
     }
 }

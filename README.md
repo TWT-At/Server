@@ -16,7 +16,6 @@ This is my try to use the **Laravel** framework to rewrite a web project of **ba
 - [x] 用户头像更换
 - [x] 用户头像展示
 - [x] 用户密码更改
-- [ ] 用户邮箱密码更改
 
 #### 项目管理
 

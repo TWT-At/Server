@@ -81,6 +81,8 @@ Route::group([
 
     Route::post("/DeleteTask",["uses" => "ProjectController@DeleteTask"]);//删除任务
 
+    Route::post('/FinishTask',["uses" => "ProjectController@FinishTask"]);//完结任务
+
 
 });
 
@@ -142,6 +144,10 @@ Route::group([
     Route::post("/update",["uses" => "AdminController@update"]);//更新用户资料
 
     Route::post("/announce",["uses" => "AdminController@announce"]);//管理员发布公告
+
+    Route::group(["prefix" => "permission"],function (){
+       Route::post("/UpdatePermission",["uses" => "PermissionController@UpdatePermission"]);//更改权限
+    });
 });
 
 /*

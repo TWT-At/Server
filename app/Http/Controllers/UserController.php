@@ -125,7 +125,7 @@ class UserController extends Controller
     public function GetComplex(Request $request)//通过post用户id获取用户相关所有信息
     {
         $id=$request->input("id");
-        $student=Student::where("id",$id)->select("id","student_id","name","email","group_name","group_role","campus","permission")->get();
+        $student=Student::where("id",$id)->select("id","student_id","name","email","group_name","group_role","campus","permission","created_at")->get();
         $created_at=strtotime(Student::where("id",$id)->value("created_at"));
         $time=time();
         $date=floor(($time-$created_at)/86400);
@@ -150,5 +150,7 @@ class UserController extends Controller
             "project" => $project,
         ]);
     }
+
+
 
 }

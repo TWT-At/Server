@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 
+
 class StudentController extends Controller
 {
     public function login()
@@ -30,6 +31,7 @@ class StudentController extends Controller
             $hour=$request->session()->get("hour");
             $group_role=$request->session()->get("group_role");
             $token=$request->session()->get("_token");
+            $WeekPublicationSituation=$this->GetWeekPublicationSituation($name);
 
             return response()->json(
                 [
@@ -44,6 +46,7 @@ class StudentController extends Controller
                             "group_role" =>$group_role,
                             "hour" =>$hour,
                             "token" => $token,
+                            "WeekPublicationSituation" => $WeekPublicationSituation,
                         ]
                 ]
             );
@@ -61,6 +64,7 @@ class StudentController extends Controller
                 $time=time();
                 $date=floor(($time-$created_at)/86400);
                 $hour=floor(($time-$created_at)/3600);
+                $WeekPublicationSituation=$this->GetWeekPublicationSituation($name);
 
                 $request->session()->put("id",$id);
                 $request->session()->put("student_id",$student);
@@ -70,6 +74,7 @@ class StudentController extends Controller
                 $request->session()->put("permission",$permission);
                 $request->session()->put("group_role",$group_role);
                 $request->session()->put("hour",$hour);
+                $request->session()->put("WeekPublicationSituation",$WeekPublicationSituation);
 
                 return response()->json(
                     [
@@ -84,8 +89,7 @@ class StudentController extends Controller
                                 "group_role" =>$group_role,
                                 "permission" => $permission,
                                 "token" => $request->session()->get("_token"),
-
-
+                                "WeekPublicationSituation" => $WeekPublicationSituation,
                             ],
                     ]
                 );
@@ -133,9 +137,21 @@ class StudentController extends Controller
                         "group_role" =>$group_role,
                         "hour" =>$hour,
                         "token" => $token,
+                        "WeekPublicationSituation" => $request->session()->get("WeekPublicationSituation"),
                     ]
             ]
         );
+    }
+
+    public function GetWeekPublicationSituation($name)
+    {
+        $max_id=DB::table("week_publication")->max("publication_id");
+        $content=WeekPubliction::where('publication_id',$max_id)->value($name);
+        if($content)
+        {
+            return true;
+        }
+        return false;
     }
 
 }

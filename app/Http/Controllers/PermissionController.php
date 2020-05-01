@@ -18,4 +18,15 @@ class PermissionController extends Controller
         }
 
     }
+
+    public function DeleteRole(Request $request)
+    {
+        $role=$request->input("role");
+        Permission::where('role',$role)->delete();
+    }
+
+    public function StopRole(Request $request)
+    {
+
+    }
 }

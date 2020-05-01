@@ -27,8 +27,8 @@ Route::get('/filetest',function (){
 });//文件上传测试
 
 Route::group([
-    'middleware' => 'session',
-    'prefix' => 'user'
+    'middleware' => ['session'],
+    'prefix' => 'user',
 ],function (){
     Route::post('/UpdateImage' ,["uses" => "AlterController@image"]);//上传图片
 
@@ -59,7 +59,7 @@ Route::group([
 
 //项目管理（组员端)
 Route::group([
-    'middleware' => 'session',
+    'middleware' => ['session'],
     'prefix' => 'project'
 ],function (){
 
@@ -89,7 +89,7 @@ Route::group([
 
 /*周报*/
 Route::group([
-    'middleware' => "session",
+    'middleware' => ["session"],
 ],function (){
     Route::post('/message',["uses" => "PageController@editor"]);//存储周报
 
@@ -100,7 +100,7 @@ Route::group([
 
 
 /*工作日志*/
-Route::group(['middleware' => "session",
+Route::group(['middleware' => ["session"],
     ],function () {
     Route::post('/UploadLog','LogController@upload_log');//发布日志
 
@@ -112,7 +112,7 @@ Route::group(['middleware' => "session",
 
 
 /*登录*/
-Route::get('/login',['uses' => 'StudentController@login']);
+//Route::get('/login',['uses' => 'StudentController@login']);
 
 Route::post('/save',["uses" => "StudentController@save"]);//登陆用户验证
 

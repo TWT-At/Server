@@ -47,9 +47,20 @@ This is my try to use the **Laravel** framework to rewrite a web project of **ba
 - [x] 项目信息
 - [x] 系统消息
 - [x] 消息公告
-- [ ] 会议信息
+- [x] 会议信息
 - [ ] 讨论消息
 - [ ] 云盘共享
+
+### 权限管理
+
+- [x] 权限数据表
+- [x] 权限中间件
+- [x] 更改权限
+- [x] 添加角色
+- [x] 删除角色
+- [x] 停用角色
+- [x] 设置默认角色
+- [x] 恢复角色
 
 ## Interface：
 

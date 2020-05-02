@@ -147,6 +147,16 @@ Route::group([
 
     Route::group(["prefix" => "permission"],function (){
        Route::post("/UpdatePermission",["uses" => "PermissionController@UpdatePermission"]);//更改权限
+
+       Route::post("/AddRole",["uses" => "PermissionController@AddRole"]);//添加角色
+
+       Route::post('/DeleteRole',["uses" => "PermissionController@DeleteRole"]);//删除角色
+
+       Route::post('/StopRole',["uses" => "PermissionController@StopRole"]);//停用角色
+
+       Route::post('/SetDefault',["uses" => "PermissionController@SetDefult"]);//设置默认角色
+
+       Route::post('/RecoverRole',['uses' => "PermissionController@RecoverRole"]);//恢复角色
     });
 });
 

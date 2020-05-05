@@ -4,6 +4,7 @@ use Illuminate\Support\Str;
 
 return [
 
+
     /*
     |--------------------------------------------------------------------------
     | Default Session Driver
@@ -126,7 +127,7 @@ return [
 
     'cookie' => env(
         'SESSION_COOKIE',
-        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
+        Str::slug(env('APP_NAME', 'at'), '_').'_session'
     ),
 
     /*
@@ -179,7 +180,7 @@ return [
     |
     */
 
-    'http_only' => true,
+    'http_only' => false,
 
     /*
     |--------------------------------------------------------------------------

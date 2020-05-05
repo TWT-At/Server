@@ -247,4 +247,22 @@ class AdminController extends Controller
         }
 
     }
+
+    public function GetAnnounce()
+    {
+        $announces=Announce::all();
+        if($announces)
+        {
+            return response()->json([
+                "error_code" => 0,
+                "announces" => $announces
+            ]);
+        }
+        else{
+            return response()->json([
+                "error_code" => 1,
+            ]);
+
+        }
+    }
 }

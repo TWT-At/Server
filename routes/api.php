@@ -22,9 +22,11 @@ Route::options('/{all}', function () {
     return response('');
 })->where(['all' => '([a-zA-Z0-9-]|_|/)+']);//屏蔽options请求
 
-Route::get('/filetest',function (){
-    return view("user.edit");
-});//文件上传测试
+Route::get('/test',function (Request $request){
+    return response()->json([
+        "operation" => $request->header("operation"),
+    ]);
+});
 
 Route::group([
     'middleware' => ['session'],
@@ -111,8 +113,6 @@ Route::group(['middleware' => ["session"],
 });
 
 
-/*登录*/
-//Route::get('/login',['uses' => 'StudentController@login']);
 
 Route::post('/save',["uses" => "StudentController@save"]);//登陆用户验证
 
@@ -145,6 +145,8 @@ Route::group([
 
     Route::post("/announce",["uses" => "AdminController@announce"]);//管理员发布公告
 
+    Route::get("/GetAnnounce",["uses" => "AdminController@GetAnnounce"]);//管理员获取公告
+
     Route::group(["prefix" => "permission"],function (){
        Route::post("/UpdatePermission",["uses" => "PermissionController@UpdatePermission"]);//更改权限
 
@@ -160,22 +162,4 @@ Route::group([
     });
 });
 
-/*
- * View OF Route
- * */
-/*Route::get('at/main',function (){
-    return view('main');
-});
 
-Route::get('at/WeekMessage',function (){
-
-    return view("student.WeekMessage");
-});
-
-Route::get('at/description',function (){
-    return view("student.description");
-});
-
-Route::get("at/editor",function (){
-    return view("student.editor");
-});*/

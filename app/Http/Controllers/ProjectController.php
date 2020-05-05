@@ -313,7 +313,23 @@ class ProjectController extends Controller
                 $finished++;
             }
         }
-
         return ($finished/$sum);
+    }
+
+    public function CalculateTaskRate($task_id)
+    {
+        $data=Task::where('id',$task_id)->select('deadline','created_at');
+        $created_at=strtotime($data["created_at"]);
+        $deadline=strtotime($data["deadline"]);
+        $TotalSpan=$deadline-$created_at;
+        $PersentSpan=time()-$created_at;
+        $count=$PersentSpan/$TotalSpan;
+        $rate=($count<1)?$created_at:1;
+        return $rate;
+    }
+
+    public function GetEveryRate($project_id,$user_id)
+    {
+
     }
 }

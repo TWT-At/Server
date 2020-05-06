@@ -88,6 +88,15 @@ Route::group([
 
 });
 
+//云盘
+Route::group([
+    'middleware' => ['session'],
+    'prefix' => 'CloudDriver'
+],function (){
+
+    Route::post("/UploadFile",["uses" => "CloudDriverController@UploadFile"]);//上传文件
+
+});
 
 /*周报*/
 Route::group([
@@ -162,4 +171,15 @@ Route::group([
     });
 });
 
+//会议预定
+Route::group([
+    'middleware' => ['session'],
+    'prefix' => 'meeting'
+],function (){
+    Route::post('/DestineMeeting',['uses' => 'MeetingController@DestineMeeting']);//预定会议
+
+    Route::post('/ShowMeeting',['uses' => "MeetingController@ShowMeeting"]);//获取会议信息
+
+    Route::post('/DeleteMeeting',['uses' => "MeetingController@DeleteMeeting"]);//删除会议
+});
 

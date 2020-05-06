@@ -56,10 +56,10 @@ class CheckPermission
             "receive message"=>"接收消息", "group message"=>"群发消息","get users'message"=>"查看组员信息","receive message2"=>"接受消息",
             "modify basic information"=>"更改基础信息","get online user"=>"查看在线人员情况","attend discussion"=>"参与讨论",
             "upload file"=>"文件上传","download file"=>"文件下载","share file"=>"文件共享","visit others'cloud disk"=>"访问他人云盘",
-            "get others' project introduction"=>"查看他人项目介绍","get other's project task"=>"查看他人项目任务",
+            "get others' project introduction"=>"查看他人项目介绍","get others' project task"=>"查看他人项目任务",
             "manage all projects"=>"编辑管理全部项目","create project"=>"创建项目","get own project"=>"查看自己的项目","meeting(WJL)"=>"预定/取消会议（卫津路）",
             "meeting(BYY)"=>"预定/取消会议（北洋园）", "get destine"=>"查看预订","attend meeting"=>"参加会议","write week publication"=>"编写周报",
-            "get other's week publication"=>"查看他人周报","comment week publication"=>"评论周报","rate week publication"=>"给周报打分"
+            "get others' week publication"=>"查看他人周报","comment week publication"=>"评论周报","rate week publication"=>"给周报打分"
         ]);
         return $PermissionArray[$action];
     }

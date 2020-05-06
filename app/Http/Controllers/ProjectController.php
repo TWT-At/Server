@@ -302,18 +302,16 @@ class ProjectController extends Controller
 
     public function CalculateProjectRate($project_id)
     {
-        $Task=Task::where('project_id',$project_id)->select('id','process')->get();
-        $sum=0;
-        $finished=0;
-        foreach ($Task as $EachTask)
+        $ProjectMembers=ProjectMember::where("project_id",$project_id)->select("name")->get();
+        $num=0;
+        $count=0;
+        foreach ($ProjectMembers as $EachArray)
         {
-            $sum++;
-            if($EachTask["process"]=="Finished")
-            {
-                $finished++;
-            }
+            $name=$EachArray["name"];
+            $num++;
+            $count+=$this->GetEveryRate($project_id,$name);
         }
-        return ($finished/$sum);
+        return ($count/$num);
     }
 
     public function CalculateTaskRate($task_id)
@@ -328,8 +326,17 @@ class ProjectController extends Controller
         return $rate;
     }
 
-    public function GetEveryRate($project_id,$user_id)
+    public function GetEveryRate($project_id,$name)
     {
-
+        $num=0;
+        $count=0;
+        $TaskIDGroup=Task::where(["project_id"=>$project_id,"name"=>$name])->select("id")->get();
+        foreach ($TaskIDGroup as $EachArray)
+        {
+            $id=$EachArray["id"];
+            $num++;
+            $count+=$this->CalculateTaskRate($id);
+        }
+        return ($count/$num);
     }
 }

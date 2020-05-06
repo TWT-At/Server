@@ -11,12 +11,10 @@ class PageController extends Controller
 {
     public function editor(Request $request)
     {
-        //$id = $request->session()->get("id");
         $name=$request->session()->get("name");
         $message = $request->input("message");
         $max_id=DB::table("week_publication")->max("publication_id");
 
-        //$date=(time()-(7*24*60*60));
         $num=DB::table("week_publication")->where("publication_id",$max_id)->update(
             [$name => $message]
         );
@@ -26,8 +24,7 @@ class PageController extends Controller
 
     public function  GetMessage()
     {
-        $time=time();
-        $test_time=$time-(7*24*60*60);
+        $time=strtotime('2020-02-17 00:00:00');
         $publication_ids=WeekPubliction::where('created_at','>',$time)->
             orderBy('publication_id','asc')->get();
 

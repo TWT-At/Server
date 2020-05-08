@@ -105,6 +105,8 @@ Route::group([
     Route::post('/message',["uses" => "PageController@editor"]);//存储周报
 
     Route::get('/GetMessage',["uses" => 'PageController@GetMessage']);//获取周报
+
+    Route::post('/ScoreMessage',['uses' => 'PageController@ScoreMessage']);//给周报打分
 });
 
 
@@ -180,6 +182,8 @@ Route::group([
 
     Route::post('/ShowMeeting',['uses' => "MeetingController@ShowMeeting"]);//获取会议信息
 
-    Route::post('/DeleteMeeting',['uses' => "MeetingController@DeleteMeeting"]);//删除会议
+    Route::post('/DeleteMeeting',['uses' => "MeetingController@DeleteMeeting"]);//取消会议
+
+    Route::post('/ChangeMeeting',["uses" => "MeetingController@ChangeMeeting"]);//修改会议
 });
 

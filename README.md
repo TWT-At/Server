@@ -12,6 +12,7 @@ This is my try to use the **Laravel** framework to rewrite a web project of **ba
 
 - [x] 用户主页
 - [x] 周报
+- [x] 周报评论
 - [x] 日志
 - [x] 用户头像更换
 - [x] 用户头像展示
@@ -40,7 +41,7 @@ This is my try to use the **Laravel** framework to rewrite a web project of **ba
 - [x] 管理员发起公告
 - [x] 增加了Excel文件导入数据成员功能
 - [x] 增加了数据正则匹配检查功能
-- [ ] 项目管理
+- [x] 项目管理
 
 ### 消息
 
@@ -62,7 +63,11 @@ This is my try to use the **Laravel** framework to rewrite a web project of **ba
 - [x] 设置默认角色
 - [x] 恢复角色
 
-## Interface：
+### 会议预定
+
+- [x] 预定会议
+- [x] 取消会议
+- [x] 修改会议时间
 
 [接口文档](https://www.showdoc.cc/KuangjuX)
 

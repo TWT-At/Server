@@ -8,6 +8,6 @@ class Meeting extends Model
 {
     public $table="meeting";
     public $primaryKey="id";
-    public $fillable=["user_id","BeginTime","EndTime","DateTime","campus","topic"];
+    public $fillable=["user_id","BeginTime","EndTime","DateTime","campus","topic","attend_user"];
     public $timestamps=false;
 }

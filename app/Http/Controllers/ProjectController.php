@@ -130,7 +130,7 @@ class ProjectController extends Controller
             $project_id=$value["project_id"];
             $data[$i]=Project::where("id",$project_id)->select("id","name","title","created_at")->get();
             $rate=$this->CalculateProjectRate($project_id);
-            $data[$i]["rate"]=$rate;
+            $data[$i][0]["rate"]=$rate;
             $i++;
          }
 
@@ -311,18 +311,20 @@ class ProjectController extends Controller
             $num++;
             $count+=$this->GetEveryRate($project_id,$name);
         }
+        if($num==0)return 0;
         return ($count/$num);
     }
 
     public function CalculateTaskRate($task_id)
     {
-        $data=Task::where('id',$task_id)->select('deadline','created_at');
-        $created_at=strtotime($data["created_at"]);
-        $deadline=strtotime($data["deadline"]);
+        $data=Task::where('id',$task_id)->select('deadline','created_at')->get();
+        $created_at=strtotime($data[0]["created_at"]);
+        $deadline=strtotime($data[0]["deadline"]);
         $TotalSpan=$deadline-$created_at;
         $PersentSpan=time()-$created_at;
-        $count=$PersentSpan/$TotalSpan;
-        $rate=($count<1)?$created_at:1;
+        $count=($PersentSpan/$TotalSpan);
+        $rate=($count<1)?$count:1;
+
         return $rate;
     }
 
@@ -336,7 +338,10 @@ class ProjectController extends Controller
             $id=$EachArray["id"];
             $num++;
             $count+=$this->CalculateTaskRate($id);
+
         }
-        return ($count/$num);
+        if($num==0)return 0;
+        $rate=$count/$num;
+        return $rate;
     }
 }

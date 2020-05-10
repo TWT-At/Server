@@ -32,6 +32,7 @@ class CheckPermission
                 "message" => "角色权限不允许".$operation
             ]);
         }
+
         $authorize=Permission::where("role",$role)->value($operation);
         if($authorize)
         {
@@ -51,7 +52,7 @@ class CheckPermission
 
     protected function GetActive($action)
     {
-        $PermissionArray=array([
+        $PermissionArray=[
             "get attendance records"=>"查看考勤记录","record attendance of team members"=>"记录组员考勤情况",
             "receive message"=>"接收消息", "group message"=>"群发消息","get users'message"=>"查看组员信息","receive message2"=>"接受消息",
             "modify basic information"=>"更改基础信息","get online user"=>"查看在线人员情况","attend discussion"=>"参与讨论",
@@ -60,7 +61,7 @@ class CheckPermission
             "manage all projects"=>"编辑管理全部项目","create project"=>"创建项目","get own project"=>"查看自己的项目","meeting(WJL)"=>"预定/取消会议（卫津路）",
             "meeting(BYY)"=>"预定/取消会议（北洋园）", "get destine"=>"查看预订","attend meeting"=>"参加会议","write week publication"=>"编写周报",
             "get others' week publication"=>"查看他人周报","comment week publication"=>"评论周报","rate week publication"=>"给周报打分"
-        ]);
+        ];
         return $PermissionArray[$action];
     }
 }

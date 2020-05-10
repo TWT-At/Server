@@ -29,7 +29,7 @@ Route::get('/test',function (Request $request){
 });
 
 Route::group([
-    'middleware' => ['session'],
+    'middleware' => ['session','permission'],
     'prefix' => 'user',
 ],function (){
     Route::post('/UpdateImage' ,["uses" => "AlterController@image"]);//上传图片
@@ -61,7 +61,7 @@ Route::group([
 
 //项目管理（组员端)
 Route::group([
-    'middleware' => ['session'],
+    'middleware' => ['session','permission'],
     'prefix' => 'project'
 ],function (){
 
@@ -90,7 +90,7 @@ Route::group([
 
 //云盘
 Route::group([
-    'middleware' => ['session'],
+    'middleware' => ['session',"permission"],
     'prefix' => 'CloudDriver'
 ],function (){
 
@@ -100,7 +100,7 @@ Route::group([
 
 /*周报*/
 Route::group([
-    'middleware' => ["session"],
+    'middleware' => ["session","permission"],
 ],function (){
     Route::post('/message',["uses" => "PageController@editor"]);//存储周报
 
@@ -113,7 +113,7 @@ Route::group([
 
 
 /*工作日志*/
-Route::group(['middleware' => ["session"],
+Route::group(['middleware' => ["session",'permission'],
     ],function () {
     Route::post('/UploadLog','LogController@upload_log');//发布日志
 
@@ -175,7 +175,7 @@ Route::group([
 
 //会议预定
 Route::group([
-    'middleware' => ['session'],
+    'middleware' => ['session','permission'],
     'prefix' => 'meeting'
 ],function (){
     Route::post('/DestineMeeting',['uses' => 'MeetingController@DestineMeeting']);//预定会议

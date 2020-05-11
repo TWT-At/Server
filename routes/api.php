@@ -107,6 +107,8 @@ Route::group([
     Route::get('/GetMessage',["uses" => 'PageController@GetMessage']);//获取周报
 
     Route::post('/ScoreMessage',['uses' => 'PageController@ScoreMessage']);//给周报打分
+
+    Route::post('/CommentMessage',['uses' => 'PageController@CommentMessage']);//评论周报
 });
 
 

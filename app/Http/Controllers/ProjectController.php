@@ -6,9 +6,11 @@ use App\Message;
 use App\Project;
 use App\ProjectLog;
 use App\ProjectMember;
+use App\Student;
 use App\Task;
 use App\TaskLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -130,7 +132,9 @@ class ProjectController extends Controller
             $project_id=$value["project_id"];
             $data[$i]=Project::where("id",$project_id)->select("id","name","title","created_at")->get();
             $rate=$this->CalculateProjectRate($project_id);
+            $task=$this->GetTaskDDL($project_id);
             $data[$i][0]["rate"]=$rate;
+            $data[$i][0]["task"]=$task;
             $i++;
          }
 
@@ -171,6 +175,12 @@ class ProjectController extends Controller
                 "error_code" => 1,
             ]);
         }
+    }
+
+    public function GetTaskDDL($project_id)//获取项目中任务ddl
+    {
+        $task=Task::where("project_id",$project_id)->select('title','deadline')->get();
+        return $task;
     }
 
     public function ShowSpecifiedProject(Request $request)//获取特定项目信息
@@ -299,6 +309,45 @@ class ProjectController extends Controller
             $Message->save();
         }
     }
+
+    public function GetEachSituation(Request $request)
+    {
+        $project_id=$request->input("project_id");
+        $member=ProjectMember::where('project_id',$project_id)->select('name')->get();
+        for($i=0;$i<count($member,0);$i++)
+        {
+            $name=$member[$i]["name"];
+            $rate=$this->GetEveryRate($project_id,$name);
+            /*$avatar_uri=Student::where('name',$name)->value("avatar");
+            $file_path="image/".$avatar_uri;
+            $avatar=Storage::get($file_path);
+            $member[$i]["avatar"]=$avatar;*/
+            $member[$i]["rate"]=$rate;
+        }
+        if($member)
+        {
+            return response()->json([
+                "error_code" => 0,
+                "data" => $member
+            ]);
+        }
+        return response()->json([
+            "error_code" => 1,
+            "message" => "获取失败"
+        ]);
+
+
+    }
+
+    public function LoadAvatar($name)
+    {
+        $avatar_uri=Student::where('name',$name)->value("avatar");
+        $file_path="image/".$avatar_uri;
+        $avatar=Storage::get($file_path);
+        return $avatar;
+    }
+
+
 
     public function CalculateProjectRate($project_id)
     {

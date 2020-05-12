@@ -85,7 +85,7 @@ Route::group([
 
     Route::post('/FinishTask',["uses" => "ProjectController@FinishTask"]);//完结任务
 
-
+    Route::post('/GetEachSituation',['uses' => 'ProjectController@GetEachSituation']);//获取项目个人信息
 });
 
 //云盘

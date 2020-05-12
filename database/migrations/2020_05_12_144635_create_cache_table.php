@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddDeletedAtToTaskTable extends Migration
+class CreateCacheTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class AddDeletedAtToTaskTable extends Migration
      */
     public function up()
     {
-        Schema::table('task', function (Blueprint $table) {
-            $table->softDeletes();
+        Schema::create('cache', function (Blueprint $table) {
+            $table->string('key')->unique();
+            $table->mediumText('value');
+            $table->integer('expiration');
         });
     }
 
@@ -25,8 +27,6 @@ class AddDeletedAtToTaskTable extends Migration
      */
     public function down()
     {
-        Schema::table('task', function (Blueprint $table) {
-            $table->dropColumn('deleted_at');
-        });
+        Schema::dropIfExists('cache');
     }
 }

@@ -32,8 +32,8 @@ class MessageController extends Controller
 
         $Message=Message::find($message_id);
         $Message->read=$status;
-        $Message->save();
-        if($Message)
+
+        if($Message->save())
         {
             return response()->json([
                 "error_code" => 0,

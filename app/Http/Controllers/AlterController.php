@@ -14,11 +14,22 @@ class AlterController extends Controller
     public function password(Request $request)
     {
         $password=$request->input("password");
-        $id=$request->input("id");
+        $id=$request->session()->get("id");
         $student=Student::find($id);
-        $student->password=$password;
-        $student->save();
-        $this->PostToMessage($id,"【账号基本信息变动】","更改密码");
+        $hash_password=password_hash($password,PASSWORD_DEFAULT);
+        $student->password=$hash_password;
+        if($student->save())
+        {
+            $this->PostToMessage($id,"【账号基本信息变动】","更改密码");
+            return response()->json([
+                "error_code" => 0
+            ]);
+        }else{
+            return response()->json([
+                "error_code" => 1,
+                "message" => "修改密码失败"
+            ]);
+        }
     }
 
     public function image(Request $request)
@@ -47,7 +58,6 @@ class AlterController extends Controller
                     ]);
 
                 }
-
                 else{
                     return response()->json([
                         "error_code" => 1,
@@ -75,7 +85,8 @@ class AlterController extends Controller
             "user_id" => $id,
             "type" => "【系统消息】",
             "title" => $title,
-            "message"=> $message
+            "message"=> $message,
+            "read" => 0,
         ]);
         $Message->save();
     }

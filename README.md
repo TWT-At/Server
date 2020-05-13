@@ -13,6 +13,8 @@ This is my try to use the **Laravel** framework to rewrite a web project of **ba
 - [x] 用户主页
 - [x] 周报
 - [x] 周报评论
+- [x] 周报评论展示
+- [x] 周报点赞
 - [x] 日志
 - [x] 用户头像更换
 - [x] 用户头像展示

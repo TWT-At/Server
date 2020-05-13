@@ -18,7 +18,7 @@ class StudentImport implements ToModel,WithHeadingRow
         return new Student([
             "student_id" => $row["student_id"],
             "name" => $row["name"],
-            "password" => $row["student_id"],
+            "password" => password_hash($row["student_id"],PASSWORD_DEFAULT),
             "group_name" => $row["group_name"],
             "group_role" => $row["group_role"],
             "campus" => $row["campus"],

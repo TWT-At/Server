@@ -10,6 +10,7 @@ use App\Student;
 use App\Task;
 use App\TaskLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
@@ -150,8 +151,6 @@ class ProjectController extends Controller
                  "error_code" =>1,
                  ]);
          }
-
-
     }
 
     public function ShowBasicProject()//展示基础项目
@@ -347,7 +346,22 @@ class ProjectController extends Controller
         return $avatar;
     }
 
-
+    public function GetUserDatum()
+    {
+        $student=Student::where('id','>',0)->select('id','group_name','campus','group_role','name')->get();
+        if($student)
+        {
+            return response()->json([
+                "error_code" => 0,
+                "data" => $student,
+            ]);
+        }else{
+            return response()->json([
+                "error_code" => 1,
+                "message" => "获取成员信息失败"
+            ]);
+        }
+    }
 
     public function CalculateProjectRate($project_id)
     {

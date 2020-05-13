@@ -22,14 +22,10 @@ Route::options('/{all}', function () {
     return response('');
 })->where(['all' => '([a-zA-Z0-9-]|_|/)+']);//屏蔽options请求
 
-Route::get('/test',function (Request $request){
-    return response()->json([
-        "operation" => $request->header("operation"),
-    ]);
-});
+Route::get('/test',['uses' => 'PageController@GetStartData']);
 
 Route::group([
-    'middleware' => ['session','permission'],
+    'middleware' => ['session','permission','cache'],
     'prefix' => 'user',
 ],function (){
     Route::post('/UpdateImage' ,["uses" => "AlterController@image"]);//上传图片
@@ -57,11 +53,13 @@ Route::group([
     Route::get('/GetIOS',["uses" => "UserController@GetIOS"]);//获取IOS组成员信息
 
     Route::post('/GetComplex',["uses" => "UserController@GetComplex"]);//获取详细信息
+
+    Route::get('/OnlineStatus',['uses' => "UserController@JudgeOnline"]);//获取成员在线状况
 });
 
 //项目管理（组员端)
 Route::group([
-    'middleware' => ['session','permission'],
+    'middleware' => ['session','permission','cache'],
     'prefix' => 'project'
 ],function (){
 
@@ -86,11 +84,13 @@ Route::group([
     Route::post('/FinishTask',["uses" => "ProjectController@FinishTask"]);//完结任务
 
     Route::post('/GetEachSituation',['uses' => 'ProjectController@GetEachSituation']);//获取项目个人信息
+
+    Route::get('/GetUserDatum',["uses" => "ProjectController@GetUserDatum"]);//获取站内成员信息
 });
 
 //云盘
 Route::group([
-    'middleware' => ['session',"permission"],
+    'middleware' => ['session',"permission",'cache'],
     'prefix' => 'CloudDriver'
 ],function (){
 
@@ -100,7 +100,7 @@ Route::group([
 
 /*周报*/
 Route::group([
-    'middleware' => ["session","permission"],
+    'middleware' => ["session","permission","cache"],
 ],function (){
     Route::post('/message',["uses" => "PageController@editor"]);//存储周报
 
@@ -109,13 +109,17 @@ Route::group([
     Route::post('/ScoreMessage',['uses' => 'PageController@ScoreMessage']);//给周报打分
 
     Route::post('/CommentMessage',['uses' => 'PageController@CommentMessage']);//评论周报
+
+    Route::post('/LoveMessageComment',["uses" => "PageController@LoveMessageComment"]);//周报评论点赞
+
+    Route::post('/GetComment',['uses' => "PageController@GetComment"]);//获取周报评论
 });
 
 
 
 
 /*工作日志*/
-Route::group(['middleware' => ["session",'permission'],
+Route::group(['middleware' => ["session",'permission',"cache"],
     ],function () {
     Route::post('/UploadLog','LogController@upload_log');//发布日志
 
@@ -127,7 +131,7 @@ Route::group(['middleware' => ["session",'permission'],
 
 
 
-Route::post('/save',["uses" => "StudentController@save"]);//登陆用户验证
+Route::post('/save',["uses" => "StudentController@save"])->middleware(['cache']);//登陆用户验证
 
 Route::group(["middleware" => "session"],function (){
     Route::get('/getinfo',["uses" => "StudentController@getinfo"]);
@@ -177,7 +181,7 @@ Route::group([
 
 //会议预定
 Route::group([
-    'middleware' => ['session','permission'],
+    'middleware' => ['session','permission',"cache"],
     'prefix' => 'meeting'
 ],function (){
     Route::post('/DestineMeeting',['uses' => 'MeetingController@DestineMeeting']);//预定会议

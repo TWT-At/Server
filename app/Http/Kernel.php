@@ -70,5 +70,6 @@ class Kernel extends HttpKernel
         'session' => \App\Http\Middleware\CheckSession::class,//检查是否设置session
         'AdminSession' => \App\Http\Middleware\CheckAdminSession::class,//检查是否设置管理员session
         'permission' => \App\Http\Middleware\CheckPermission::class,//检查用户权限
+        'cache' => \App\Http\Middleware\CacheActivity::class//缓存用户在线状况
     ];
 }

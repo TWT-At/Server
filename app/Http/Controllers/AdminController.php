@@ -159,7 +159,9 @@ class AdminController extends Controller
         }
         foreach ($data as $EachMember)
         {
+            $EachMember["password"]=password_hash($EachMember["password"],PASSWORD_DEFAULT);
             $student=new Student;
+
 
             $student->name=$EachMember["name"];
             $student->student_id=$EachMember["student_id"];

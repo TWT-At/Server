@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Project;
 use Illuminate\Http\Request;
 use App\Student;
+use Illuminate\Support\Facades\Cache;
 
 class UserController extends Controller
 {
@@ -149,6 +150,34 @@ class UserController extends Controller
             "student" => $student,
             "project" => $project,
         ]);
+    }
+
+    public function JudgeOnline()//判断成员是否在线
+    {
+        $nameGroup=Student::where('id','>',0)->select('name')->get();
+        $IfOnline=array();
+        for($i=0;$i<count($nameGroup,0);$i++)
+        {
+            $name=$nameGroup[$i]["name"];
+            if(Cache::has($name))
+            {
+                $IfOnline[$name]="online";
+            }else{
+                $IfOnline[$name]="offline";
+            }
+        }
+        if($IfOnline)
+        {
+            return response()->json([
+                "error_code" => 0,
+                "online" => $IfOnline
+            ]);
+        }
+        return response()->json([
+            "error_code" => 1,
+            "message" => "获取成员在线情况失败"
+        ]);
+
     }
 
 

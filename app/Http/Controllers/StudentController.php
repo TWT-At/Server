@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Student;
 use App\WeekPubliction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
@@ -12,14 +13,9 @@ use Illuminate\Support\Facades\Session;
 
 class StudentController extends Controller
 {
-    public function login()
-    {
-        return view('student.login');
-    }
 
     public function save(Request $request)
     {
-        //$request->session()->flush();
         if($request->session()->has("student_id"))
         {
             $id=$request->session()->get("id");
@@ -38,6 +34,7 @@ class StudentController extends Controller
                     "error_code" => 0,
                     "data" =>
                         [
+                            "id" => $id,
                             "name" => $name,
                             "group" => $group,
                             "student_id" => $student_id,
@@ -101,13 +98,14 @@ class StudentController extends Controller
             );
         }
 
-
     }
 
 
     public function judge($student_id,$password)
     {
-        return Student::where("student_id",$student_id)->value('password')==$password;
+        $hash_password=Student::where("student_id",$student_id)->value('password');
+        $judge=password_verify($password,$hash_password);
+        return $judge;
     }
 
 

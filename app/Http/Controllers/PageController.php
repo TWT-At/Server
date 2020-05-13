@@ -64,9 +64,9 @@ class PageController extends Controller
         {
             return [$year.'-02-17',$year.'-09-01'];
         }else if($month<=2&&$month>0){
-            return [strtotime(($year-1).'-09-01 00:00:00'),strtotime($year.'-02-17 00:00:00')];
+            return [(string)(intval($year)-1).'-09-01 00:00:00',$year.'-02-17 00:00:00'];
         }else{
-            return [strtotime($year.'-09-01 00:00:00'),strtotime(($year+1).'-02-17 00:00:00')];
+            return [$year.'-09-01 00:00:00',(string)(intval($year)+1).'-02-17 00:00:00'];
         }
     }
 

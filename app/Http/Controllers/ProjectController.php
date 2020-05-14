@@ -187,9 +187,20 @@ class ProjectController extends Controller
         $project_id=$request->input("project_id");
 
         $title=Project::where("id",$project_id)->value("title");//项目标题
+
         $description=Project::where("id",$project_id)->value("description");//项目描述
+
         $process=Project::where("id",$project_id)->value("process");//项目进程
+
         $member=ProjectMember::where("project_id",$project_id)->select("name","group_name","permission","created_at")->get();//获取项目成员、组别、权限、加入时间
+        for($i=0;$i<count($member,0);$i++)
+        {
+            $name=$member[$i]["name"];
+            $MemberID=$this->GetMemberID($name);
+            $TaskNum=$this->GetMemberNumOFTask($project_id,$name);
+            $member[$i]["member_id"]=$MemberID;
+            $member[$i]["task_num"]=$TaskNum;
+        }
 
         $task=Task::where("project_id",$project_id)->select("name","title","description","process","created_at")->get();
 
@@ -214,6 +225,21 @@ class ProjectController extends Controller
             ]);
         }
 
+    }
+
+    public function GetMemberID($name)
+    {
+        $ID=Student::where("name",$name)->value("id");
+        return $ID;
+    }
+
+    public function GetMemberNumOFTask($project_id,$name)
+    {
+        $Num=count(Task::where([
+            "project_id" => $project_id,
+            "name" => $name
+        ])->select('id')->get(),0);
+        return $Num;
     }
 
     public function DelayTask(Request $request)

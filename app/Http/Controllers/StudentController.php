@@ -18,33 +18,23 @@ class StudentController extends Controller
     {
         if($request->session()->has("student_id"))
         {
-            $id=$request->session()->get("id");
-            $student_id=$request->session()->get("student_id");
-            $name=$request->session()->get("name");
-            $group=$request->session()->get("group");
-            $date=$request->session()->get("date");
-            $permission=$request->session()->get("permission");
-            $hour=$request->session()->get("hour");
-            $group_role=$request->session()->get("group_role");
-            $token=$request->session()->get("_token");
-            $WeekPublicationSituation=$this->GetWeekPublicationSituation($name);
-
+            $Session=$request->session();
+            $data=array(
+              "id" => $Session->get("id"),
+              "student_id" => $Session->get("student_id"),
+              "name" => $Session->get("name"),
+              "group" => $Session->get("group"),
+              "date" => $Session->get("date"),
+              "permission" => $Session->get("permission"),
+              "hour" => $Session->get("hour"),
+              "group_role" => $Session->get("group_role"),
+              "token" => $Session->get("_token"),
+              "WeekPublicationSituation" => $this->GetWeekPublicationSituation($Session->get("name"))
+            );
             return response()->json(
                 [
                     "error_code" => 0,
-                    "data" =>
-                        [
-                            "id" => $id,
-                            "name" => $name,
-                            "group" => $group,
-                            "student_id" => $student_id,
-                            "date" => $date,
-                            "permission" => $permission,
-                            "group_role" =>$group_role,
-                            "hour" =>$hour,
-                            "token" => $token,
-                            "WeekPublicationSituation" => $WeekPublicationSituation,
-                        ]
+                    "data" => $data
                 ]
             );
         }
@@ -73,11 +63,13 @@ class StudentController extends Controller
                 $request->session()->put("hour",$hour);
                 $request->session()->put("WeekPublicationSituation",$WeekPublicationSituation);
 
+
                 return response()->json(
                     [
                         "error_code" => 0,
                         "data" =>
                             [
+                                "id" => $id,
                                 "name" => $name,
                                 "group" => $group,
                                 "student_id" => $student,
@@ -94,6 +86,7 @@ class StudentController extends Controller
             else return response()->json(
                 [
                     "error_code" => 1,
+                    "message" => "获取用户信息失败"
                 ]
             );
         }

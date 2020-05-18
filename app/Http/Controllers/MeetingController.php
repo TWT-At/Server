@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Meeting;
 use App\Message;
+use App\PeopleFace;
 use App\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class MeetingController extends Controller
 {
@@ -136,5 +138,173 @@ class MeetingController extends Controller
             $j++;
         }
     }
+
+    public function UploadPersonalPhoto(Request $request)
+    {
+        $photo=$request->file("photo");
+        $user_id=$request->session()->get("id");
+        if($photo->isValid())
+        {
+            $ext=$photo->getClientOriginalExtension();
+            $type=explode("/",$photo->getMimeType())[0];
+            if($type=="image")
+            {
+                $realPath=$photo->getRealPath();
+                $file_new_name=date('Y-m-d-H-i-s').'-'.uniqid().'.'.$ext;
+                Storage::disk('face')->put($file_new_name,file_get_contents($realPath));
+
+                $student=Student::find($user_id);
+                $student->people_face=$file_new_name;
+                $student->save();
+                return response()->json([
+                    "error_code" => 0,
+                ]);
+
+            }
+            else{
+                return response()->json([
+                    "error_code" => 1,
+                    "message" => "上传失败，不是可上传的文件类型",
+                ]);
+            }
+
+        }
+
+    }
+    public function GetAccessToken()
+    {
+        $param=array(
+            "grant_type" => "client_credentials",
+            "client_id" => "nDVIpGo0TR97oAiOcFDwQt75",
+            "client_secret" => "jFKjlVmtsjcmhcBHSktC3tCi6uzvWGbf"
+        );
+        $HTTPURL="https://aip.baidubce.com/oauth/2.0/token";
+        $curl=curl_init();
+        curl_setopt($curl,CURLOPT_URL,$HTTPURL);
+        curl_setopt($curl,CURLOPT_HEADER,0);
+        curl_setopt($curl,CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($curl,CURLOPT_POST,1);
+        curl_setopt($curl,CURLOPT_POSTFIELDS,$param);
+
+        $data=json_decode(curl_exec($curl));
+        curl_close($curl);
+
+        $access_token="";
+        foreach ($data as $key => $value)
+        {
+            if($key=="access_token")$access_token=$value;
+        }
+        if($access_token=="")
+            return array(
+                    "error_code" => 1,
+                    "message" => "获取access_token失败"
+                );
+        return array(
+                "error_code" => 0,
+                "access_token" => $access_token
+            );
+
+    }
+
+    public function FaceRecognition(Request $request)
+    {
+        if($this->GetAccessToken()["error_code"]==1)
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "获取access_token失败"
+            ]);
+        }
+        $Face=$request->file("face");
+        $People=$this->GetPeopleImage();
+        $access_token=$this->GetAccessToken()["access_token"];
+        $URL="https://aip.baidubce.com/rest/2.0/face/v3/match?access_token=".$access_token;
+        $curl=curl_init();
+        $FaceImage=$this->ImgBase64Encode($Face,false);
+        $PeopleImage=$this->ImgBase64Encode($People,true);
+        $body=json_encode(array(
+            0 =>
+                array(
+                    "image" => $FaceImage,
+                    "image_type" => "BASE64"
+                ),
+            1 =>
+                array(
+                    "image" => $PeopleImage,
+                    "image_type" => "BASE64"
+                )
+            )
+        );
+
+        curl_setopt($curl,CURLOPT_URL,$URL);
+        curl_setopt($curl,CURLOPT_HEADER,0);
+
+        curl_setopt($curl,CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($curl,CURLOPT_SSL_VERIFYPEER,false);
+
+        curl_setopt($curl,CURLOPT_POST,1);
+        curl_setopt($curl,CURLOPT_POSTFIELDS,$body);
+
+        $data=json_decode(curl_exec($curl));
+        curl_close($curl);
+
+
+        foreach ($data as $key => $value)
+        {
+            if($key=="error_code")
+            {
+                if($value==1)
+                    return response()->json([
+                        "error_code" => 1,
+                        "message" => "识别失败"
+                    ]);
+            }
+            if($key=="result")
+            {
+                foreach ($value as $k => $v)
+                {
+                    if($k=="score")
+                    {
+                       $score=$v;
+                        return response()->json([
+                            "error_code" => 0,
+                            "score" => $score
+                        ]);
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    public function ImgBase64Encode($image,$ImgContent=false)
+    {
+        $file_content="";
+        if($ImgContent==false)
+        {
+            $file_content=file_get_contents($image);
+        }else if($ImgContent==true){
+            $file_content=$image;
+        }
+
+        if($file_content === false){
+            return $image;
+        }
+        $base64 =chunk_split(base64_encode($file_content));
+        return $base64;
+    }
+
+
+    public function GetPeopleImage()
+    {
+        $user_id=\Illuminate\Support\Facades\Request::session()->get("id");
+        $image_name=Student::where("id",$user_id)->value("people_face");
+        $file_path="face/".$image_name;
+        $face=Storage::get($file_path);
+        return $face;
+    }
+
+
 
 }

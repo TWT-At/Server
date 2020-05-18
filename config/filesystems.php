@@ -63,6 +63,13 @@ return [
 
         ],
 
+        'face' => [
+            'driver' => 'local',
+            'root' => storage_path('app/face'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+        ],
+
         'file' => [
           'driver' => 'local',
           'root' => storage_path('app/file'),

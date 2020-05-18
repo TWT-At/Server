@@ -24,6 +24,7 @@ Route::options('/{all}', function () {
 
 Route::get('/test',['uses' => 'PageController@GetStartData']);
 
+
 Route::group([
     'middleware' => ['session','permission','cache'],
     'prefix' => 'user',
@@ -33,6 +34,8 @@ Route::group([
     Route::get('/GetAvatar',["uses" => "AlterController@GetAvatar"]);//获取用户头像
 
     Route::post('/UpdatePassword',["uses" => "AlterController@password"]);//修改密码
+
+    Route::post('/UploadPersonalPhoto',["uses" => "MeetingController@UploadPersonalPhoto"]);//上传用户展示照片，用于会议签到头像识别
 
     Route::post('/UpdateEmailPassword',["uses" => "AlterController@email_password"]);//修改邮箱密码
 
@@ -191,5 +194,7 @@ Route::group([
     Route::post('/DeleteMeeting',['uses' => "MeetingController@DeleteMeeting"]);//取消会议
 
     Route::post('/ChangeMeeting',["uses" => "MeetingController@ChangeMeeting"]);//修改会议
+
+    Route::post('/FaceRecognition',['uses' => 'MeetingController@FaceRecognition']);//会议预定人脸识别
 });
 

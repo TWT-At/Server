@@ -32,14 +32,14 @@ class ProjectController extends Controller
 
         $project->save();
 
-        $project_id=Project::where("title",$title)->value("id");
+        $project_id=Project::where(["name" => $name, "title" => $title, "description" => $description])->value("id");
 
         $projectmember=new ProjectMember([
             "project_id" => $project_id,
             "name" => $name,
             "user_id" => $author_id,
             "permission" => $permission,
-            "group_name" => $request->session()->get("group_name"),
+            "group_name" => $request->session()->get("group"),
         ]);
 
         $projectmember->save();
@@ -54,6 +54,18 @@ class ProjectController extends Controller
         $message=$name."创建了项目";
 
         $this->PostToMessage($project_id,"创建项目",$message);
+
+        if($project_id)
+        {
+            return response()->json([
+                "error_code" => 0,
+                "project_id" => $project_id
+            ]);
+        }
+        return response()->json([
+            "error_code" => 1,
+            "message" => "创建项目失败"
+        ]);
 
     }
 
@@ -110,6 +122,8 @@ class ProjectController extends Controller
 
         $task->save();
 
+        $task_id=Task::where(["project_id" => $project_id, "name" => $name, "title" => $title])->value("id");
+
         $ProjectLog=new ProjectLog([
             "project_id" => $project_id,
             "name" => $name,
@@ -119,6 +133,17 @@ class ProjectController extends Controller
 
         $ProjectLog->save();//更新项目日志
         $this->PostToMessage($project_id,"创建任务",$message);
+        if($task_id)
+        {
+            return response()->json([
+                "error_code" => 0,
+                "task_id" => $task_id
+            ]);
+        }
+        return response()->json([
+            "error_code" => 1,
+            "message" => "创建任务失败"
+        ]);
     }
 
     public function ShowMyProject(Request $request)//展示我的项目
@@ -319,7 +344,7 @@ class ProjectController extends Controller
 
     public function PostToMessage($project_id,$title,$message)
     {
-        $IDGroup=ProjectMember::where("project",$project_id)->select("user_id")->get();
+        $IDGroup=ProjectMember::where("project_id",$project_id)->select("user_id")->get();
         foreach ($IDGroup as $EachArray)
         {
             $user_id=$EachArray["user_id"];

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Meeting;
 use App\Message;
-use App\PeopleFace;
 use App\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;

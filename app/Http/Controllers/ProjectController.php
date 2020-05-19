@@ -188,7 +188,7 @@ class ProjectController extends Controller
             return response()->json([
                 "error_code" => 1,
                 "message" => "更新日志失败",
-                "cause" => $queryExceptionq
+                "cause" => $queryException
             ]);
         }
         $this->PostToMessage($project_id,"创建任务",$message);
@@ -259,11 +259,7 @@ class ProjectController extends Controller
         }
     }
 
-    public function GetTaskDDL($project_id)//获取项目中任务ddl
-    {
-        $task=Task::where("project_id",$project_id)->select('title','deadline')->get();
-        return $task;
-    }
+
 
     public function ShowSpecifiedProject(Request $request)//获取特定项目信息
     {
@@ -723,6 +719,20 @@ class ProjectController extends Controller
 
 
 
+
+    public function GetTaskDDL($project_id)//获取项目中任务ddl
+    {
+        try {
+            $task = Task::where("project_id", $project_id)->select('title', 'deadline')->get();
+        }catch (QueryException $queryException){
+            return response()->json([
+                "error_code" => 1,
+                "message" => "获取任务ddl失败",
+                "cause" => $queryException
+            ]);
+        }
+        return $task;
+    }
 
     protected function CalculateProjectRate($project_id)
     {

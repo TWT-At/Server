@@ -89,6 +89,16 @@ Route::group([
     Route::post('/GetEachSituation',['uses' => 'ProjectController@GetEachSituation']);//获取项目个人信息
 
     Route::get('/GetUserDatum',["uses" => "ProjectController@GetUserDatum"]);//获取站内成员信息
+
+    Route::post('/FinishProject',["uses" => "ProjectController@FinishProject"]);//完结项目
+
+    Route::post('/GetMemberDatum',["uses" => "ProjectController@GetMemberDatum"]);//获取组员信息
+
+    Route::post('/CreateOtherTask',["uses" => "ProjectController@CreateOtherTask"]);//为其他人创建任务
+
+    Route::post('/TransferLeader',["uses" => "ProjectController@TransferLeader"]);//转让组长
+
+    Route::post('/DeleteMember',["uses" => "ProjectController@DeleteMember"]);//删除成员
 });
 
 //云盘

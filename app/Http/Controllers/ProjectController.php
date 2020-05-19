@@ -9,6 +9,8 @@ use App\ProjectMember;
 use App\Student;
 use App\Task;
 use App\TaskLog;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -22,39 +24,74 @@ class ProjectController extends Controller
         $name=$request->session()->get("name");
         $permission=1;
 
-        $project = new Project([
-            "title" => $title,
-            "description" => $description,
-            "author_id" => $author_id,
-            "name" => $name,
-            "permission" =>$permission,
-        ]);//创建项目新模型
+        try {
+            $project = new Project([
+                "title" => $title,
+                "description" => $description,
+                "author_id" => $author_id,
+                "name" => $name,
+                "permission" => $permission,
+            ]);//创建项目新模型
 
-        $project->save();
+            $project->save();
+        }catch (QueryException $exception)
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "创建项目失败",
+                "cause" => $exception
+            ]);
+        }
 
         $project_id=Project::where(["name" => $name, "title" => $title, "description" => $description])->value("id");
 
-        $projectmember=new ProjectMember([
-            "project_id" => $project_id,
-            "name" => $name,
-            "user_id" => $author_id,
-            "permission" => $permission,
-            "group_name" => $request->session()->get("group"),
-        ]);
+        try {
+            $ProjectMember = new ProjectMember([
+                "project_id" => $project_id,
+                "name" => $name,
+                "user_id" => $author_id,
+                "permission" => $permission,
+                "group_name" => $request->session()->get("group"),
+            ]);
 
-        $projectmember->save();
+            $ProjectMember->save();
+        }catch (QueryException $exception)
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "添加到项目成员失败",
+                "cause" => $exception
+            ]);
+        }
 
-        $projectLog=new ProjectLog([
-            "project_id" => $project_id,
-            "name" => $name,
-            "description" => "创建了项目"
-        ]);//增加日志
+        try {
+            $projectLog = new ProjectLog([
+                "project_id" => $project_id,
+                "name" => $name,
+                "description" => "创建了项目"
+            ]);//增加日志
 
-        $projectLog->save();
-        $message=$name."创建了项目";
+            $projectLog->save();
+        }catch (QueryException $exception)
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "添加到日志失败",
+                "cause" => $exception
+            ]);
+        }
+        try {
+            $message = $name . "创建了项目";
 
-        $this->PostToMessage($project_id,"创建项目",$message);
-
+            $this->PostToMessage($project_id, "创建项目", $message);
+        }catch (QueryException $exception)
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "添加到日志失败",
+                "cause" => $exception
+            ]);
+        }
         if($project_id)
         {
             return response()->json([
@@ -72,13 +109,15 @@ class ProjectController extends Controller
     public function AddMember(Request $request)//项目添加成员
     {
         $data=$request->all()["data"];//获取所有数据
+        $project_id=$request->all()["project_id"];
         $i=0;
         foreach ($data as $everyone)
         {
-            $project_id=$everyone[$i]["project_id"];
-            $user_id=$everyone[$i]["id"];
-            $name=$everyone[$i]["name"];
-            $group=$everyone[$i]["group"];
+
+            //$project_id=$everyone["project_id"];
+            $user_id=$everyone["user_id"];
+            $name=$everyone["name"];
+            $group=$everyone["group"];
             $permission=0;
 
             $ProjectMember=new ProjectMember([
@@ -102,6 +141,9 @@ class ProjectController extends Controller
             $message=$request->session()->get("name").'添加了成员'.$name;
             $this->PostToMessage($project_id,"人员加入",$message);
         }
+        return response()->json([
+            "error_code" => 0
+        ]);
     }
 
 
@@ -112,26 +154,43 @@ class ProjectController extends Controller
         $name=$request->session()->get("name");
         $title=$request->input("title");
         $description=$request->input("description");
+        $deadline=$request->input("deadline");
 
-        $task=new Task([
-            "project_id" => $project_id,
-            "name" => $name,
-            "title" => $title,
-            "description" => $description,
-        ]);//新建任务模型
+        try {
+            $task = new Task([
+                "project_id" => $project_id,
+                "name" => $name,
+                "title" => $title,
+                "description" => $description,
+                "deadline" => $deadline
+            ]);//新建任务模型
 
-        $task->save();
-
+            $task->save();
+        }catch (QueryException $queryException){
+            return response()->json([
+                "error_code" => 1,
+                "message" => "创建项目失败",
+                "cause" => $queryException
+            ]);
+        }
         $task_id=Task::where(["project_id" => $project_id, "name" => $name, "title" => $title])->value("id");
 
-        $ProjectLog=new ProjectLog([
-            "project_id" => $project_id,
-            "name" => $name,
-            "description" => $name."发起任务【".$title."】",
-        ]);
-        $message=$name."发起任务【".$title."】";
+        try {
+            $ProjectLog = new ProjectLog([
+                "project_id" => $project_id,
+                "name" => $name,
+                "description" => $name . "发起任务【" . $title . "】",
+            ]);
+            $message = $name . "发起任务【" . $title . "】";
 
-        $ProjectLog->save();//更新项目日志
+            $ProjectLog->save();//更新项目日志
+        }catch (QueryException $queryException){
+            return response()->json([
+                "error_code" => 1,
+                "message" => "更新日志失败",
+                "cause" => $queryExceptionq
+            ]);
+        }
         $this->PostToMessage($project_id,"创建任务",$message);
         if($task_id)
         {
@@ -251,6 +310,40 @@ class ProjectController extends Controller
 
     }
 
+    public function FinishProject(Request $request)//完结项目
+    {
+        $project_id=$request->input("project_id");
+        try{
+            $project=Project::find($project_id);
+            $project->process="完结";
+            $project->save();
+
+        }catch (ModelNotFoundException $exception)
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "项目完结失败",
+                "cause" => $exception
+            ]);
+        }
+
+        try{
+            $this->PostToMessage($project_id,"项目完结","项目完结");
+        }catch (ModelNotFoundException $exception)
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "发送消息失败",
+                "cause" => $exception
+            ]);
+        }
+        return response()->json([
+            "error_code" => 0
+        ]);
+
+
+    }
+
     public function GetMemberID($name)
     {
         $ID=Student::where("name",$name)->value("id");
@@ -322,11 +415,23 @@ class ProjectController extends Controller
 
     public function FinishTask(Request $request)
     {
-        $TaskID=$request->input("task_id");
-        $process="Finished";
-        $Task=Task::find($TaskID);
-        $Task->process=$process;
-        $Task->save();
+        try {
+            $TaskID = $request->input("task_id");
+            $process = "Finished";
+            $Task = Task::find($TaskID);
+            $Task->process = $process;
+            $Task->save();
+        }catch (ModelNotFoundException $exception)
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "删除任务失败",
+                "cause" => $exception
+            ]);
+        }
+        return response()->json([
+            "error_code" => 0
+        ]);
     }
 
     public function RemoveMember(Request $request)
@@ -342,22 +447,7 @@ class ProjectController extends Controller
         $this->PostToMessage($project_id,"人员退出",$message);
     }
 
-    public function PostToMessage($project_id,$title,$message)
-    {
-        $IDGroup=ProjectMember::where("project_id",$project_id)->select("user_id")->get();
-        foreach ($IDGroup as $EachArray)
-        {
-            $user_id=$EachArray["user_id"];
-            $Message=new Message([
-                "user_id" => $user_id,
-                "type" => "【项目信息】",
-                "title" => $title,
-                "message" => $message,
-                "read" => 0
-            ]);
-            $Message->save();
-        }
-    }
+
 
     public function GetEachSituation(Request $request)
     {
@@ -367,10 +457,6 @@ class ProjectController extends Controller
         {
             $name=$member[$i]["name"];
             $rate=$this->GetEveryRate($project_id,$name);
-            /*$avatar_uri=Student::where('name',$name)->value("avatar");
-            $file_path="image/".$avatar_uri;
-            $avatar=Storage::get($file_path);
-            $member[$i]["avatar"]=$avatar;*/
             $member[$i]["rate"]=$rate;
         }
         if($member)
@@ -413,7 +499,232 @@ class ProjectController extends Controller
         }
     }
 
-    public function CalculateProjectRate($project_id)
+    public function GetMemberDatum(Request $request)
+    {
+        $project_id=$request->input("project_id");
+        try{
+            $ProjectMember=ProjectMember::where("project_id",$project_id)->select("user_id","name","group_name","permission")->get();
+        }catch (QueryException $exception)
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "成员获取失败",
+                "cause" => $exception
+            ]);
+        }
+        if($ProjectMember) {
+            return response()->json([
+                "error_code" => 0,
+                "data" => $ProjectMember
+            ]);
+        }
+        return response()->json([
+            "error_code" => 1,
+            "message" => "查询为空"
+        ]);
+    }
+
+    public function CreateOtherTask(Request $request)
+    {
+        $project_id = $request->input("project_id");
+        $name=$request->input("name");
+        $title=$request->input("title");
+        $description=$request->input("description");
+        $deadline=$request->input("deadline");
+
+        try {
+            $task = new Task([
+                "project_id" => $project_id,
+                "name" => $name,
+                "title" => $title,
+                "description" => $description,
+                "deadline" => $deadline,
+            ]);//新建任务模型
+
+            $task->save();
+        }catch (QueryException $exception)
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "创建任务失败",
+                "cause" => $exception
+            ]);
+        }
+        $task_id=Task::where(["project_id" => $project_id, "name" => $name, "title" => $title])->value("id");
+
+        try {
+            $ProjectLog = new ProjectLog([
+                "project_id" => $project_id,
+                "name" => $name,
+                "description" => $name . "发起任务【" . $title . "】",
+            ]);
+            $message = $name . "发起任务【" . $title . "】";
+            $ProjectLog->save();//更新项目日志
+        }catch (QueryException $exception)
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "更新项目日志失败",
+                "cause" => $exception
+            ]);
+        }
+
+        try {
+            $this->PostToMessage($project_id, "创建任务", $message);
+        }catch (QueryException $exception)
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "发送消息失败",
+                "cause" => $exception
+            ]);
+        }
+        if($task_id) {
+            return response()->json([
+                "error_code" => 0,
+                "task_id" => $task_id
+            ]);
+        }
+    }
+
+    public function TransferLeader(Request $request)
+    {
+        $project_id=$request->input("project_id");
+        $user_id=$request->input("user_id");
+        $name=$request->input("name");
+
+        try{
+            $project=Project::find($project_id);
+        }catch (ModelNotFoundException $exception)
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "未发现该项目",
+                "cause" => $exception
+            ]);
+        }
+        try{
+            $project->name=$name;
+            $project->author_id=$user_id;
+            $project->save();
+        }catch (QueryException $exception){
+            return response()->json([
+                "error_code" => 1,
+                "message" => "转让组长失败",
+                "cause" => $exception
+            ]);
+        }
+
+        try{
+            $leader_id=$request->session()->get("id");
+            $ProjectLeader_id=ProjectMember::where(["project_id" => $project_id,"user_id" => $leader_id])->value("id");
+            $ProjectMember_id=ProjectMember::where(["project_id" => $project_id,"user_id" => $user_id])->value("id");
+        }catch (QueryException $exception)
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "未找到该成员",
+                "cause" => $exception
+            ]);
+        }
+
+        try{
+            $ProjectLeader=ProjectMember::find($ProjectLeader_id);
+            $ProjectMember=ProjectMember::find($ProjectMember_id);
+        }catch (ModelNotFoundException $exception){
+            return response()->json([
+                "error_code" => 1,
+                "message" => "未找到该成员",
+                "cause" => $exception
+            ]);
+        }
+
+
+        try{
+            $ProjectLeader->permission=0;
+            $ProjectLeader->save();
+            $ProjectMember->permission=1;
+            $ProjectMember->save();
+        }catch (QueryException $exception){
+            return response()->json([
+                "error_code" => 1,
+                "message" => "转让组长失败",
+                "cause" => $exception
+            ]);
+        }
+
+        try{
+            $ProjectLog=new ProjectLog([
+             "project_id" => $project_id,
+             "name" => $request->session()->get("name"),
+             "description" => $request->session()->get("name")."转让组长给".$name
+            ]);
+            $ProjectLog->save();
+        }catch (QueryException $queryException){
+            return response()->json([
+                "error_code" => 1,
+                "message" => "更新日志失败",
+                "cause" => $queryException,
+            ]);
+        }
+
+        $title="组长转让";
+        $message=$request->session()->get("name")."转让组长给".$name;
+        $this->PostToMessage($project_id,$title,$message);
+        return response()->json([
+            "error_code" => 0
+        ]);
+
+    }
+
+    public function DeleteMember(Request $request)
+    {
+        $name=$request->input("name");
+        $user_id=$request->input("user_id");
+        $project_id=$request->input("project_id");
+        try{
+            $ProjectMember_id=ProjectMember::where(["project_id" => $project_id,"user_id" => $user_id])->value("id");
+            ProjectMember::destroy([$ProjectMember_id]);
+        }catch (QueryException $queryException){
+            return response()->json([
+                "error_code" => 1,
+                "message" => "删除成员失败",
+                "cause" => $queryException
+            ]);
+        }
+
+        try{
+            $ProjectLog=new ProjectLog([
+               "project_id" => $project_id,
+                "name" => $request->session()->get("name"),
+                "description" => $request->session()->get("name")."删除了成员".$name
+            ]);
+            $ProjectLog->save();
+        }catch (QueryException $queryException){
+            return response()->json([
+                "error_code" => 1,
+                "message" => "更新消息失败",
+                "cause" => $queryException
+            ]);
+        }
+        $title="删除成员";
+        $message=$request->session()->get("name")."删除了成员".$name;
+        $this->PostToMessage($project_id,$title,$message);
+        return response()->json([
+            "error_code" => 0
+        ]);
+    }
+
+
+    /*仅在本控制器内使用的方法*/
+    /*保护方法*/
+
+
+
+
+
+
+    protected function CalculateProjectRate($project_id)
     {
         $ProjectMembers=ProjectMember::where("project_id",$project_id)->select("name")->get();
         $num=0;
@@ -428,7 +739,7 @@ class ProjectController extends Controller
         return ($count/$num);
     }
 
-    public function CalculateTaskRate($task_id)
+    protected function CalculateTaskRate($task_id)
     {
         $data=Task::where('id',$task_id)->select('deadline','created_at')->get();
         $created_at=strtotime($data[0]["created_at"]);
@@ -441,7 +752,7 @@ class ProjectController extends Controller
         return $rate;
     }
 
-    public function GetEveryRate($project_id,$name)
+     protected function GetEveryRate($project_id,$name)
     {
         $num=0;
         $count=0;
@@ -456,5 +767,31 @@ class ProjectController extends Controller
         if($num==0)return 0;
         $rate=$count/$num;
         return $rate;
+    }
+
+    protected function PostToMessage($project_id,$title,$message)
+    {
+        $IDGroup=ProjectMember::where("project_id",$project_id)->select("user_id")->get();
+        foreach ($IDGroup as $EachArray) {
+            $user_id = $EachArray["user_id"];
+            try {
+                $Message = new Message([
+                    "user_id" => $user_id,
+                    "type" => "【项目信息】",
+                    "title" => $title,
+                    "message" => $message,
+                    "read" => 0
+                ]);
+                $Message->save();
+            }catch (QueryException $queryException){
+                return response()->json([
+                    "error_code" => 1,
+                    "message" => "更新消息失败",
+                    "cause" => $queryException
+                ]);
+            }
+
+
+        }
     }
 }

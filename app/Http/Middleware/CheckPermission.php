@@ -23,7 +23,14 @@ class CheckPermission
         $operation=$this->GetActive($action);//获取用户行为
         if(in_array($operation,["编辑管理全部项目"]))
         {
-            $project_id=$request->input("project_id");
+            //$project_id=$request->input("project_id");
+            $project_id="";
+            if($request->has("project_id"))
+            {
+                $project_id=$request->input("project_id");
+            }else{
+                $project_id=$request->all()["project_id"];
+            }
             $name=$request->session()->get("name");
             if($this->CheckProject($project_id,$name))
                 return $next($request);

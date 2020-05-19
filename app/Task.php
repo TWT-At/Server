@@ -11,7 +11,7 @@ class Task extends Model
     protected $table="task";
     protected $primaryKey="id";
     //protected $dates=["deleted_at"];
-    protected $fillable=["project_id","name","title","description","process"];
+    protected $fillable=["project_id","name","title","description","process","deadline"];
 
     public $timestamps=false;
 }

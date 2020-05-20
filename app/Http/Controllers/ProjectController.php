@@ -348,7 +348,7 @@ class ProjectController extends Controller
         }
 
         try {
-            $task = Task::where("project_id", $project_id)->select("name", "title", "description", "process", "created_at")->get();
+            $task = Task::where("project_id", $project_id)->select("name", "title", "description", "process", "deadline","created_at")->get();
 
             $log = ProjectLog::where("project_id", $project_id)->select("name", "description", "update_at")->get();
         }catch (QueryException $queryException){
@@ -470,6 +470,12 @@ class ProjectController extends Controller
                 "error_code" => 1,
                 "message" => "删除任务失败",
                 "cause" => $modelNotFoundException
+            ]);
+        } catch (QueryException $queryException) {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "删除任务失败",
+                "cause" => $queryException
             ]);
         }
 
@@ -865,6 +871,10 @@ class ProjectController extends Controller
                 "cause" => $queryException
             ]);
         }
+
+        return response()->json([
+            "error_code" => 0
+        ]);
     }
 
 
@@ -908,7 +918,7 @@ class ProjectController extends Controller
             $count+=$this->GetEveryRate($project_id,$name);
         }
         if($num==0)return 0;
-        return ($count/$num);
+        return round($count/$num);
     }
 
     protected function CalculateTaskRate($task_id)
@@ -921,7 +931,7 @@ class ProjectController extends Controller
         $count=($PersentSpan/$TotalSpan);
         $rate=($count<1)?$count:1;
 
-        return $rate;
+        return round($rate);
     }
 
      protected function GetEveryRate($project_id,$name)
@@ -937,7 +947,7 @@ class ProjectController extends Controller
 
         }
         if($num==0)return 0;
-        $rate=$count/$num;
+        $rate=round($count/$num);
         return $rate;
     }
 

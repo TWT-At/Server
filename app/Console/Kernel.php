@@ -27,7 +27,11 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->call(function (){
-            $WeekPublication=new WeekPubliction();
+            $date=new \DateTime(date('Y-m-d h:i:s',time()));
+            $week=date('W',time());
+            $year=$date->format('Y');
+            $period=$year.'-'.$week;
+            $WeekPublication=new WeekPubliction(["period" => $period]);
             $WeekPublication->save();
         })->timezone("Asia/Shanghai")->weeklyOn(1,'0:00');//自动生成每周周报
     }

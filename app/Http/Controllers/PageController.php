@@ -8,6 +8,7 @@ use App\WeekPublicationLoveComment;
 use App\WeekPublicationScore;
 use App\WeekPubliction;
 use DateTime;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -35,13 +36,28 @@ class PageController extends Controller
         $publication=WeekPubliction::whereDate('created_at','>=',$StartTime)
             ->whereDate('created_at','<=',$EndTime)
             ->orderBy('created_at','desc')->get();
+        $WeekPublicationFinishedSituation=array();
 
+
+        $publication=json_decode($publication,true);
+        for($i=0;$i<count($publication,0);$i++)
+        {
+            foreach ($publication[$i] as $key => $value)
+            {
+                if($key=="publication_id"||$key=="period"||$key=="created_at"||$key=="update_at") {
+                    $WeekPublicationFinishedSituation[$i][$key] = $value;
+                }else{
+                    if($value==null)$WeekPublicationFinishedSituation[$i][$key]="Unfinished";
+                    else $WeekPublicationFinishedSituation[$i][$key]="Finished";
+                }
+            }
+        }
 
         if($publication)
         {
             return response()->json([
                 "error_code" => 0,
-                "publication" => $publication
+                "WeekPublicationFinisherSituation" => $WeekPublicationFinishedSituation
             ]);
         }else{
             return response()->json([
@@ -51,11 +67,40 @@ class PageController extends Controller
         }
     }
 
+    public function GetMessageDetail(Request $request)
+    {
+        $publication_id=$request->input("publication_id");
+        $author=$request->input("author");
+        try{
+            $WeekPublication=WeekPubliction::where(["publication_id" => $publication_id])->value($author);
+        }catch (QueryException $queryException){
+            return response()->json([
+                "error_code" => 1,
+                "message" => "获取周报失败",
+                "cause" => $queryException
+
+            ]);
+        }
+
+        return response()->json([
+            "error_code" => 0,
+            "data" => $WeekPublication
+        ]);
+    }
+
 
 
     public function GetStartData()//获取周报展示的开始日期和截止日期
     {
-        $date = new DateTime(date('Y-m-d h:i:s',time()));
+        try {
+            $date = new DateTime(date('Y-m-d h:i:s', time()));
+        } catch (\Exception $e) {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "日期获取错误",
+                "cause" => $e
+            ]);
+        }
         $year=$date->format('Y');
         $month=$date->format('m');
         $day=$date->format('d');
@@ -160,8 +205,7 @@ class PageController extends Controller
             $count=$LoveSituation["count"];
             $exist=$LoveSituation["exist"];
             $comment[$i]["love"]=array("count"=> $count,"exist" => $exist);
-            /*$comment[$i]["love"]["count"]=$count;
-            $comment[$i]["love"]["exist"]=$exist;*/
+
         }
         if($comment)
         {

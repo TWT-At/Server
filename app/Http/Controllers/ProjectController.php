@@ -561,12 +561,25 @@ class ProjectController extends Controller
     public function GetEachSituation(Request $request)
     {
         $project_id=$request->input("project_id");
-        $member=ProjectMember::where('project_id',$project_id)->select('name')->get();
+        try {
+            $member = ProjectMember::where('project_id', $project_id)->select('name')->get();
+            //$avatar = $this->LoadAvatar($member);
+        }catch (QueryException $queryException){
+            return response()->json([
+                "error_code" => 1,
+                "message" => "获取信息失败",
+                "cause" => $queryException
+            ]);
+        }
+
         for($i=0;$i<count($member,0);$i++)
         {
             $name=$member[$i]["name"];
             $rate=$this->GetEveryRate($project_id,$name);
+            $avatar=chunk_split(base64_encode($this->LoadAvatar($name)));
+
             $member[$i]["rate"]=$rate;
+            $member[$i]["avatar"]=$avatar;
         }
         if($member)
         {
@@ -583,13 +596,7 @@ class ProjectController extends Controller
 
     }
 
-    public function LoadAvatar($name)
-    {
-        $avatar_uri=Student::where('name',$name)->value("avatar");
-        $file_path="image/".$avatar_uri;
-        $avatar = Storage::get($file_path);
-        return $avatar;
-    }
+
 
     public function GetUserDatum()
     {
@@ -884,6 +891,13 @@ class ProjectController extends Controller
 
 
 
+    protected function LoadAvatar($name)//加载成员头像
+    {
+        $avatar_uri=Student::where('name',$name)->value("avatar");
+        $file_path="image/".$avatar_uri;
+        $avatar =Storage::get($file_path);
+        return $avatar;
+    }
 
     protected function GetMemberID($name)
     {

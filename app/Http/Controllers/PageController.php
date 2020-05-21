@@ -27,11 +27,13 @@ class PageController extends Controller
         return false;
     }
 
-    public function  GetMessage()
+    public function  GetMessage(Request $request)
     {
-        $DateRange = $this->GetStartData();
+        $semester=$request->input("semester");
+        $DateRange = $this->GetStartData($semester);
         $StartTime = $DateRange[0];
         $EndTime = $DateRange[1];
+        //var_dump($StartTime);
 
         $publication=WeekPubliction::whereDate('created_at','>=',$StartTime)
             ->whereDate('created_at','<=',$EndTime)
@@ -90,9 +92,10 @@ class PageController extends Controller
 
 
 
-    public function GetStartData()//获取周报展示的开始日期和截止日期
+    public function GetStartData($semester)//获取周报展示的开始日期和截止日期
     {
-        try {
+        $data=explode('-',$semester);
+        /*try {
             $date = new DateTime(date('Y-m-d h:i:s', time()));
         } catch (\Exception $e) {
             return response()->json([
@@ -112,6 +115,30 @@ class PageController extends Controller
             return [(string)(intval($year)-1).'-09-01 00:00:00',$year.'-02-17 00:00:00'];
         }else{
             return [$year.'-09-01 00:00:00',(string)(intval($year)+1).'-02-17 00:00:00'];
+        }*/
+        $year=null;
+        $split=null;
+
+        if($data[2]=="1")
+        {
+            $year=$data[0];
+            $split=2;
+        }else{
+            $year=$data[1];
+            $split=1;
+        }
+
+        if($split==1){
+            return array(
+                0 => $year.'-02-17 00:00:00',
+                1 => $year.'-09-01 00:00:00'
+            );
+
+        }else{
+            return array(
+                0 => $year.'-09-01 00:00:00',
+                1 => (string)(intval($year)+1).'-02-17 00:00:00'
+            );
         }
     }
 

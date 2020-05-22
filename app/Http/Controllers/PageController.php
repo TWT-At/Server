@@ -33,12 +33,20 @@ class PageController extends Controller
         $DateRange = $this->GetStartData($semester);
         $StartTime = $DateRange[0];
         $EndTime = $DateRange[1];
-        //var_dump($StartTime);
 
-        $publication=WeekPubliction::whereDate('created_at','>=',$StartTime)
-            ->whereDate('created_at','<=',$EndTime)
-            ->orderBy('created_at','desc')->get();
-        $WeekPublicationFinishedSituation=array();
+        try {
+            $publication = WeekPubliction::whereDate('created_at', '>=', $StartTime)
+                ->whereDate('created_at', '<=', $EndTime)
+                ->orderBy('created_at', 'desc')->get();
+        }catch (QueryException $queryException)
+        {
+            return response()->json([
+                "error_code" => 1,
+                "message" => "获取周报失败",
+                "cause" => $queryException
+            ]);
+        }
+       /* $WeekPublicationFinishedSituation=array();
 
 
         $publication=json_decode($publication,true);
@@ -53,13 +61,67 @@ class PageController extends Controller
                     else $WeekPublicationFinishedSituation[$i][$key]="Finished";
                 }
             }
-        }
+        }*/
+       $publication=json_decode($publication,true);
+       $data=array();
+       try {
+           $student = Student::where('id', '>', 0)->select('name', 'campus', 'group_name')->get();
+       }catch (QueryException $queryException)
+       {
+           return response()->json([
+               "error_code" => 1,
+               "message" => "获取成员信息失败",
+               "cause" => $queryException
+           ]);
+       }
+
+       for($i=0;$i<count($student,0);$i++)//构造响应
+       {
+           $data[$i]=array();
+           $name=$student[$i]["name"];
+           $data[$i]["name"]=$name;
+           $data[$i]["campus"]=$student[$i]["campus"];
+           $data[$i]["group"]=$student[$i]["group_name"];
+           $WeekPublication=array();
+           for ($j=0;$j<count($publication,0);$j++)
+           {
+               $publication_id=$publication[$j]["publication_id"];
+               $period=$publication[$j]["period"];
+               $created_at=$publication[$j]["created_at"];
+               $update_at=$publication[$j]["update_at"];
+
+               $content=null;
+               if(isset($publication[$i]["name"]))
+               {
+                   $content=$publication[$i]["name"];
+               }
+
+               $status=null;
+               if($content==null)$status="UnFinished";
+               else $status="Finished";
+
+
+               $student[$i]["WeekPublication"]=array();
+
+               $WeekPublication[$j]["publication_id"]=$publication_id;
+               $WeekPublication[$j]["period"]=$period;
+               $WeekPublication[$j]["created_at"]=$created_at;
+               $WeekPublication[$j]["update_at"]=$update_at;
+               $WeekPublication[$j]["status"]=$status;
+
+               $data[$i]["WeekPublication"]=$WeekPublication;
+
+           }
+
+       }
+
+
 
         if($publication)
         {
             return response()->json([
                 "error_code" => 0,
-                "WeekPublicationFinisherSituation" => $WeekPublicationFinishedSituation
+                "data" => $data
             ]);
         }else{
             return response()->json([

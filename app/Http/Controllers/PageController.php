@@ -46,22 +46,6 @@ class PageController extends Controller
                 "cause" => $queryException
             ]);
         }
-       /* $WeekPublicationFinishedSituation=array();
-
-
-        $publication=json_decode($publication,true);
-        for($i=0;$i<count($publication,0);$i++)
-        {
-            foreach ($publication[$i] as $key => $value)
-            {
-                if($key=="publication_id"||$key=="period"||$key=="created_at"||$key=="update_at") {
-                    $WeekPublicationFinishedSituation[$i][$key] = $value;
-                }else{
-                    if($value==null)$WeekPublicationFinishedSituation[$i][$key]="Unfinished";
-                    else $WeekPublicationFinishedSituation[$i][$key]="Finished";
-                }
-            }
-        }*/
        $publication=json_decode($publication,true);
        $data=array();
        try {
@@ -157,27 +141,7 @@ class PageController extends Controller
     public function GetStartData($semester)//获取周报展示的开始日期和截止日期
     {
         $data=explode('-',$semester);
-        /*try {
-            $date = new DateTime(date('Y-m-d h:i:s', time()));
-        } catch (\Exception $e) {
-            return response()->json([
-                "error_code" => 1,
-                "message" => "日期获取错误",
-                "cause" => $e
-            ]);
-        }
-        $year=$date->format('Y');
-        $month=$date->format('m');
-        $day=$date->format('d');
-        $DayHash=intval($month)*100+intval($day);
-        if($DayHash>=217&&$DayHash<901)
-        {
-            return [$year.'-02-17',$year.'-09-01'];
-        }else if($month<=2&&$month>0){
-            return [(string)(intval($year)-1).'-09-01 00:00:00',$year.'-02-17 00:00:00'];
-        }else{
-            return [$year.'-09-01 00:00:00',(string)(intval($year)+1).'-02-17 00:00:00'];
-        }*/
+
         $year=null;
         $split=null;
 
@@ -290,7 +254,7 @@ class PageController extends Controller
         {
             $comment[$i]["love"]=array();
             $comment_id=$comment[$i]["id"];
-            $LoveSituation=$this->LoveSituation($comment_id);
+            $LoveSituation=$this->LoveSituation($comment_id,$request);
             $count=$LoveSituation["count"];
             $exist=$LoveSituation["exist"];
             $comment[$i]["love"]=array("count"=> $count,"exist" => $exist);
@@ -311,14 +275,14 @@ class PageController extends Controller
         }
     }
 
-    public function LoveSituation($comment_id)
+    public function LoveSituation($comment_id,Request $request)
     {
         $LoveComment=WeekPublicationLoveComment::where("to_comment_id",$comment_id)->select("user_id")->get();
         $count=count($LoveComment,0);
         $exist=0;
         for($i=0;$i<$count;$i++)
         {
-            if($LoveComment[$i]["user_id"]==\Illuminate\Support\Facades\Request::session()->get("id"))
+            if($LoveComment[$i]["user_id"]==$request->session()->get("id"))
             {
                 $exist=1;
             }

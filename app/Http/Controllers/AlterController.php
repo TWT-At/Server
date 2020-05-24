@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Message;
 use App\Student;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Storage;
@@ -32,11 +33,11 @@ class AlterController extends Controller
         }
     }
 
-    public function image(Request $request)
+    public function UpdateImage(Request $request)
     {
         if($request->isMethod('POST'))
         {
-            $id=$request->input("id");
+            $id=$request->session()->get("id");
             $id=intval($id);
             $avatar=$request->file("avatar");
             if($avatar->isValid())
@@ -46,13 +47,28 @@ class AlterController extends Controller
                 $Type=explode("/",$type)[0];
                 if($Type=="image")
                 {
+                    $AvatarName=Student::where("id",$id)->value("avatar");
                     $realPath=$avatar->getRealPath();
                     $file_new_name=date('Y-m-d-H-i-s').'-'.uniqid().'.'.$ext;
                     Storage::disk('image')->put($file_new_name,file_get_contents($realPath));
 
-                    $student=Student::find($id);
-                    $student->avatar=$file_new_name;
-                    $student->save();
+                    try {
+                        $student = Student::find($id);
+                        $student->avatar = $file_new_name;
+                        $student->save();
+                    }catch (QueryException $queryException){
+                        return response()->json([
+                            "error_code" => 1,
+                            "message" => "图片存储失败",
+                            "cause" => $queryException
+                        ]);
+                    }
+
+
+                    if($AvatarName!=null) {
+                        Storage::disk("image")->delete($AvatarName);
+                    }
+
                     return response()->json([
                         "error_code" => 0,
                     ]);

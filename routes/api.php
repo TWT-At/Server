@@ -1,5 +1,6 @@
 <?php
 
+use App\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,14 +23,23 @@ Route::options('/{all}', function () {
     return response('');
 })->where(['all' => '([a-zA-Z0-9-]|_|/)+']);//屏蔽options请求
 
-Route::get('/test',['uses' => 'PageController@GetStartData']);
+
+Route::post('/save',["uses" => "StudentController@save"])->middleware(['cache']);//登陆用户验证
+
+Route::get('/logout',function (Request $request){//登出
+    $request->session()->flush();
+})->middleware(["session"]);
+
+Route::group(["middleware" => "session"],function (){
+    Route::get('/getinfo',["uses" => "StudentController@getinfo"]);
+});
 
 
 Route::group([
     'middleware' => ['session','permission','cache'],
     'prefix' => 'user',
 ],function (){
-    Route::post('/UpdateImage' ,["uses" => "AlterController@image"]);//上传图片
+    Route::post('/UpdateImage' ,["uses" => "AlterController@UpdateImage"]);//上传图片
 
     Route::get('/GetAvatar',["uses" => "AlterController@GetAvatar"]);//获取用户头像
 
@@ -146,11 +156,6 @@ Route::group(['middleware' => ["session",'permission',"cache"],
 
 
 
-Route::post('/save',["uses" => "StudentController@save"])->middleware(['cache']);//登陆用户验证
-
-Route::group(["middleware" => "session"],function (){
-    Route::get('/getinfo',["uses" => "StudentController@getinfo"]);
-});
 
 
 

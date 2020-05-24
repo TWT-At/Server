@@ -3,14 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Message;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
     public function GetMessage(Request $request)
     {
+
         $user_id=$request->session()->get("id");
-        $message=Message::where("user_id",$user_id)->select("id","title","type","message","read","created_at")->get();
+        try {
+            $message = Message::where(["user_id" => $user_id, "read" => 0])->select("id", "title", "type", "message", "read", "created_at")->get();
+        }catch (QueryException $queryException){
+            return response()->json([
+                "error_code" => 1,
+                "message" => "获取消息失败",
+                "cause" => $queryException
+            ]);
+        }
+
         if($message)
         {
             return response()->json([

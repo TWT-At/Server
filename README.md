@@ -6,70 +6,83 @@
 
 This is my try to use the **Laravel** framework to rewrite a web project of **backend** development named AT in the **TWT**.
 
-## Process：
+## Get Started
 
-### 用户页面
+### Prerequisites
 
-- [x] 用户主页
-- [x] 周报
-- [x] 周报评论
-- [x] 周报评论展示
-- [x] 周报点赞
-- [x] 日志
-- [x] 用户头像更换
-- [x] 用户头像展示
-- [x] 用户密码更改
+To set up the environment, you need to have following dependencies installed.
 
-#### 项目管理
+- `PHP` >= 7.25
+- `MySQl `>=5.7
+- `composer`
 
-- [x] 创建项目
-- [x] 添加成员
-- [x] 增加了数据正则匹配检查功能
-- [x] 创建任务
-- [x] 返回我的项目接口
-- [x] 返回基础项目接口
-- [x] 返回特定项目接口
-- [x] 项目数据表整体设计完成
-- [x] 任务延期
-- [x] 任务删除
+### Installation
 
+First, You need to obtain the package.
 
-### 管理员
+```
+git clone git@github.com:TWT-At/Server.git
+cd Server
+```
 
-- [x] 管理员主页接口
-- [x] 管理员增加成员（支持批量增加）
-- [x] 管理员删除成员（支持批量删除）
-- [x] 管理员更新成员信息
-- [x] 管理员发起公告
-- [x] 增加了Excel文件导入数据成员功能
-- [x] 增加了数据正则匹配检查功能
-- [x] 项目管理
+Then, you need to install dependencies.
 
-### 消息
+```
+composer install
+```
 
-- [x] 项目信息
-- [x] 系统消息
-- [x] 消息公告
-- [x] 会议信息
-- [ ] 讨论消息
-- [ ] 云盘共享
+## Config
 
-### 权限管理
+You can copy `.env` five from the `.env.example`, configure the basic information.
 
-- [x] 权限数据表
-- [x] 权限中间件
-- [x] 更改权限
-- [x] 添加角色
-- [x] 删除角色
-- [x] 停用角色
-- [x] 设置默认角色
-- [x] 恢复角色
+```
+/*You can configure the name and url of the project*/
+APP_NAME=at
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost
 
-### 会议预定
+LOG_CHANNEL=stack
 
-- [x] 预定会议
-- [x] 取消会议
-- [x] 修改会议时间
+/*You can configure mysql here*/
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=root
+DB_PASSWORD=
 
-[接口文档](https://www.showdoc.cc/KuangjuX)
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS=null
+MAIL_FROM_NAME="${APP_NAME}"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_APP_CLUSTER=mt1
+
+MIX_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
+MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
+```
 

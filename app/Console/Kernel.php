@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->call(function (){
             $date=new \DateTime(date('Y-m-d h:i:s',(time()+28800)));
-            $week=date('W',time());
+            $week=date('W',(time()+28810));
             $year=$date->format('Y');
             $period=$year.'-'.$week;
             $WeekPublication=new WeekPubliction(["period" => $period]);

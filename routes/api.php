@@ -1,6 +1,9 @@
 <?php
 
 use App\Project;
+use App\ProjectLog;
+use App\ProjectMember;
+use App\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +22,27 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get("/delete",function (){
+    Project::where('id','>',0)->delete();
+    ProjectMember::where('id','>',0)->delete();
+    ProjectLog::where('id','>',0)->delete();
+    Task::where('id','>=',1)->delete();
+});
+
+
+Route::get("/TestTimeStamp",function (){
+   $time=time();
+   echo "当前UNIX时间戳：".$time;
+   echo "</br>";
+   echo "当前时间：".date("Y-m-d H:i:s",$time);
+   echo "<br/>";
+
+   echo "加上八小时之后的时间".date("Y-m-d H:i:s",$time+28800);
+});
+
+Route::get('/GetWeek',function (){
+    return date('W',time());
+});
 Route::options('/{all}', function () {
     return response('');
 })->where(['all' => '([a-zA-Z0-9-]|_|/)+']);//屏蔽options请求
@@ -213,5 +237,7 @@ Route::group([
     Route::post('/ChangeMeeting',["uses" => "MeetingController@ChangeMeeting"]);//修改会议
 
     Route::post('/FaceRecognition',['uses' => 'MeetingController@FaceRecognition']);//会议预定人脸识别
+
+    Route::post('/SignIn',["uses" => "MeetingController@SignIn"])->middleware(["MeetingSignIn"]);//签到
 });
 

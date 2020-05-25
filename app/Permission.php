@@ -77,6 +77,8 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission where预定/取消会议（北洋园）($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission where预定/取消会议（卫津路）($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission where预定/取消会议（北洋园）($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission where预定/取消会议（卫津路）($value)
  */
 class Permission extends Model
 {

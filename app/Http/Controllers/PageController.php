@@ -23,8 +23,16 @@ class PageController extends Controller
         $num=DB::table("week_publication")->where("publication_id",$max_id)->update(
             [$name => $message]
         );
-        if($num>0)return true;
-        return false;
+        if($num>0){
+            return response()->json([
+                "error_code" => 0
+            ]);
+        }
+        return response()->json([
+            "error_code" => 1,
+            "message" => "编辑周报失败"
+        ]);
+
     }
 
     public function  GetMessage(Request $request)
@@ -75,9 +83,9 @@ class PageController extends Controller
                $update_at=$publication[$j]["update_at"];
 
                $content=null;
-               if(isset($publication[$i]["name"]))
+               if(isset($publication[$j][$name]))
                {
-                   $content=$publication[$i]["name"];
+                   $content=$publication[$j][$name];
                }
 
                $status=null;

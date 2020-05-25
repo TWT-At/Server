@@ -41,7 +41,6 @@ class Task extends Model
     use SoftDeletes;
     protected $table="task";
     protected $primaryKey="id";
-    //protected $dates=["deleted_at"];
     protected $fillable=["project_id","name","title","description","process","deadline"];
 
     public $timestamps=false;

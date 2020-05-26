@@ -25,15 +25,14 @@ class ProjectController extends Controller
         $permission=1;
 
         try {
-            $project = new Project([
+
+            $project_id=Project::insertGetId([
                 "title" => $title,
                 "description" => $description,
                 "author_id" => $author_id,
                 "name" => $name,
                 "permission" => $permission,
-            ]);//创建项目新模型
-
-            $project->save();
+            ]);
         }catch (QueryException $exception)
         {
             return response()->json([
@@ -43,7 +42,6 @@ class ProjectController extends Controller
             ]);
         }
 
-        $project_id=Project::where(["name" => $name, "title" => $title, "description" => $description])->value("id");
 
         try {
             $ProjectMember = new ProjectMember([
@@ -170,7 +168,7 @@ class ProjectController extends Controller
         $deadline=$request->input("deadline");
 
         try {
-            $task = new Task([
+            /*$task = new Task([
                 "project_id" => $project_id,
                 "name" => $name,
                 "title" => $title,
@@ -178,7 +176,14 @@ class ProjectController extends Controller
                 "deadline" => $deadline
             ]);//新建任务模型
 
-            $task->save();
+            $task->save();*/
+            $task_id=Task::insertGetId([
+                "project_id" => $project_id,
+                "name" => $name,
+                "title" => $title,
+                "description" => $description,
+                "deadline" => $deadline
+            ]);
         }catch (QueryException $queryException){
             return response()->json([
                 "error_code" => 1,
@@ -186,7 +191,7 @@ class ProjectController extends Controller
                 "cause" => $queryException
             ]);
         }
-        $task_id=Task::where(["project_id" => $project_id, "name" => $name, "title" => $title])->value("id");
+        //$task_id=Task::where(["project_id" => $project_id, "name" => $name, "title" => $title])->value("id");
 
         try {
             $ProjectLog = new ProjectLog([
@@ -564,7 +569,6 @@ class ProjectController extends Controller
         $project_id=$request->input("project_id");
         try {
             $member = ProjectMember::where('project_id', $project_id)->select('name')->get();
-            //$avatar = $this->LoadAvatar($member);
         }catch (QueryException $queryException){
             return response()->json([
                 "error_code" => 1,
@@ -576,7 +580,15 @@ class ProjectController extends Controller
         for($i=0;$i<count($member,0);$i++)
         {
             $name=$member[$i]["name"];
-            $rate=$this->GetEveryRate($project_id,$name);
+            try {
+                $rate = $this->GetEveryRate($project_id, $name);
+            }catch (\DivisionByZeroError $exception){
+                return response()->json([
+                    "error_code" => 1,
+                    "message" => "不能被0除",
+                    "cause" => $exception
+                ]);
+            }
             $avatar=chunk_split(base64_encode($this->LoadAvatar($name)));
 
             $member[$i]["rate"]=$rate;

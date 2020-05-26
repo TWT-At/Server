@@ -3,6 +3,7 @@
 use App\Project;
 use App\ProjectLog;
 use App\ProjectMember;
+use App\Student;
 use App\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +43,19 @@ Route::get("/TestTimeStamp",function (){
 
 Route::get('/GetWeek',function (){
     return date('W',time());
+});
+
+Route::get("/TestID",function (){
+   $id=Student::insertGetId([
+       "student_id" => "666666",
+       "password" => password_hash("123456",PASSWORD_DEFAULT),
+       "name" => "段登峰",
+       "group_name" => "产品组",
+       "group_role" => "组员",
+       "campus" => "卫津路",
+       "email" => "itsstevenduan@tju.edu.cn"
+   ]);
+   return $id;
 });
 Route::options('/{all}', function () {
     return response('');

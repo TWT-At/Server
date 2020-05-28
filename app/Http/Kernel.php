@@ -73,5 +73,6 @@ class Kernel extends HttpKernel
         'cache' => \App\Http\Middleware\CacheActivity::class,//缓存用户在线状况
 
         "MeetingSignIn" => \App\Http\Middleware\MeetingSignIn::class, //签到中间件
+        "MeetingAskForLeave" => \App\Http\Middleware\AskForLeave::class //会议请假中间件
     ];
 }

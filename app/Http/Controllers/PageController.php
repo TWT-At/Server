@@ -262,10 +262,13 @@ class PageController extends Controller
         {
             $comment[$i]["love"]=array();
             $comment_id=$comment[$i]["id"];
+            $name=$comment[$i]["name"];
+            $campus=Student::where('name',$name)->value("campus");
             $LoveSituation=$this->LoveSituation($comment_id,$request);
             $count=$LoveSituation["count"];
             $exist=$LoveSituation["exist"];
             $comment[$i]["love"]=array("count"=> $count,"exist" => $exist);
+            $comment[$i]["campus"]=$campus;
 
         }
         if($comment)

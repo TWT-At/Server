@@ -253,5 +253,7 @@ Route::group([
     Route::post('/FaceRecognition',['uses' => 'MeetingController@FaceRecognition']);//会议预定人脸识别
 
     Route::post('/SignIn',["uses" => "MeetingController@SignIn"])->middleware(["MeetingSignIn"]);//签到
+
+    Route::post('/AskForLeave',["uses" => "MeetingController@AskForLeave"])->middleware(["MeetingAskForLeave"]);
 });
 

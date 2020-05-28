@@ -187,7 +187,7 @@ class ProjectController extends Controller
         }catch (QueryException $queryException){
             return response()->json([
                 "error_code" => 1,
-                "message" => "创建项目失败",
+                "message" => "创建任务失败",
                 "cause" => $queryException
             ]);
         }
@@ -354,7 +354,7 @@ class ProjectController extends Controller
         }
 
         try {
-            $task = Task::where("project_id", $project_id)->select("name", "title", "description", "process", "deadline","created_at")->get();
+            $task = Task::where("project_id", $project_id)->select("id","name", "title", "description", "process", "deadline","created_at")->get();
 
             $log = ProjectLog::where("project_id", $project_id)->select("name", "description", "update_at")->get();
         }catch (QueryException $queryException){

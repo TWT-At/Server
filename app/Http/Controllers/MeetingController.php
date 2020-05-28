@@ -6,6 +6,7 @@ use App\Meeting;
 use App\MeetingAttendee;
 use App\Message;
 use App\Student;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -260,17 +261,75 @@ class MeetingController extends Controller
                 "cause" => $queryException
             ]);
         }
+
+        $time=time()+1800;
+        $BeginTime = strtotime(MeetingAttendee::where("id", $meeting_id)->value("BeginTime"));
+        if($time<=$BeginTime&&$time>=($BeginTime-1800)){
+            try {
+                $MeetingAttendee = MeetingAttendee::find($id);
+                $MeetingAttendee->status = 1;
+                $MeetingAttendee->save();
+            }catch (QueryException $queryException){
+                return response()->json([
+                    "error_code" => 1,
+                    "message" => "更新失败",
+                    "cause" => $queryException
+                ]);
+            }
+        }else if($time>$BeginTime&&$time<=($BeginTime+1800)){
+            try{
+                $MeetingAttendee=MeetingAttendee::find($id);
+                $MeetingAttendee->status=2;
+                $MeetingAttendee->save();
+            }catch (QueryException $queryException){
+                return response()->json([
+                    "error_code" => 1,
+                    "message" => "更新失败",
+                    "cause" => $queryException
+                ]);
+            }
+        }
+
+        return response()->json([
+            "error_code" => 0
+        ]);
+
+    }
+
+    public function AskForLeave(Request $request){
+        $meeting_id=$request->input("meeting_id");
+        $user_id=$request->session()->get("id");
         try {
-            $MeetingAttendee = MeetingAttendee::find($id);
-            $MeetingAttendee->status = 1;
-            $MeetingAttendee->save();
+            $id = MeetingAttendee::where(["meeting_id" => $meeting_id, "user_id" => $user_id])->value("id");
         }catch (QueryException $queryException){
             return response()->json([
                 "error_code" => 1,
-                "message" => "更新失败",
+                "message" => "查询失败",
                 "cause" => $queryException
             ]);
         }
+
+        try{
+            $MeetingAttendee=MeetingAttendee::find($id);
+            $MeetingAttendee->status=3;
+            $MeetingAttendee->save();
+        }catch (ModelNotFoundException $modelNotFoundException){
+            return response()->json([
+                "error_code" => 1,
+                "message" => "请假失败",
+                "cause" => $modelNotFoundException
+            ]);
+        }catch (QueryException $queryException){
+            return response()->json([
+               "error_code" => 1,
+                "message" => "请假失败",
+                "cause" => $queryException
+            ]);
+        }
+
+        return response()->json([
+            "error_code" => 0
+        ]);
     }
 
 

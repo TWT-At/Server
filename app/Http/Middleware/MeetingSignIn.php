@@ -19,7 +19,7 @@ class MeetingSignIn
         $meeting_id = $request->input("meeting_id");
         $time = time() + 28800;
         $BeginTime = strtotime(MeetingAttendee::where("id", $meeting_id)->value("BeginTime"));
-        if ($time >= $BeginTime && $time < ($BeginTime + 1800)) {
+        if ($time >= ($BeginTime-1800) && $time < ($BeginTime + 1800)) {
             return $next($request);
         }else{
             return response()->json([

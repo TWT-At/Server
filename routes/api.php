@@ -147,6 +147,8 @@ Route::group([
     Route::post('/TransferLeader',["uses" => "ProjectController@TransferLeader"]);//转让组长
 
     Route::post('/DeleteMember',["uses" => "ProjectController@DeleteMember"]);//删除成员
+
+    Route::post('/GetDelayTaskLog',["uses" => "PageController@GetDelayTaskLog"]);//获取项目延期日志
 });
 
 //云盘

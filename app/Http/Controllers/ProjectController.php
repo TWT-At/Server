@@ -8,6 +8,7 @@ use App\ProjectLog;
 use App\ProjectMember;
 use App\Student;
 use App\Task;
+use App\TaskDelayLog;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -429,25 +430,40 @@ class ProjectController extends Controller
         $deadline=$request->input("deadline");
         $reason=$request->input("reason");
 
-        $task=Task::where("id",$task_id)->update([
+        Task::where("id",$task_id)->update([
             "deadline" => $deadline,
         ]);
 
-        $task->save();
-        $oldDeadline=Task::where("id",$task_id)->value("deadline");//获取设置的deadline
-        $TaskTitle=Task::where("id",$task_id)->value("title");//获取任务标题
+        try {
+            $oldDeadline = Task::where("id", $task_id)->value("deadline");//获取设置的deadline
+            $TaskTitle = Task::where("id", $task_id)->value("title");//获取任务标题
 
-        $ProjectLog=new ProjectLog([
-            "project_id" => $project_id,
-            "name" => $request->session()->get("name"),
-            "description" => "延迟任务【".$TaskTitle."】"."完结时间从【".$oldDeadline."】"."延期至【".$deadline."】"
-            ."因为【".$reason."】",
-        ]);
-        $message="延迟任务【".$TaskTitle."】"."完结时间从【".$oldDeadline."】"."延期至【".$deadline."】"
-            ."因为【".$reason."】";
+            $ProjectLog = new ProjectLog([
+                "project_id" => $project_id,
+                "name" => $request->session()->get("name"),
+                "description" => "延迟任务【" . $TaskTitle . "】" . "完结时间从【" . $oldDeadline . "】" . "延期至【" . $deadline . "】"
+                    . "因为【" . $reason . "】",
+            ]);
+            $message = "延迟任务【" . $TaskTitle . "】" . "完结时间从【" . $oldDeadline . "】" . "延期至【" . $deadline . "】"
+                . "因为【" . $reason . "】";
 
-        $ProjectLog->save();
-        $this->PostToMessage($project_id,"延迟任务",$message);
+            $ProjectLog->save();
+            $this->PostToMessage($project_id, "延迟任务", $message);
+
+            $TaskDelayLog=new TaskDelayLog([
+                "task_id" => $task_id,
+                "project_id" => $project_id,
+                "new_ddl" => $deadline,
+                "old_ddl" => $oldDeadline
+            ]);
+            $TaskDelayLog->save();
+        }catch (QueryException $queryException){
+            return response()->json([
+                "error_code" => 1,
+                "message" => "延迟失败",
+                "cause" => $queryException
+            ]);
+        }
     }
 
     public function DeleteTask(Request $request)
@@ -897,6 +913,28 @@ class ProjectController extends Controller
         ]);
     }
 
+    public function GetDelayTaskLog(Request $request)
+    {
+        $project_id=$request->input("project_id");
+        $task_id=$request->input("task_id");
+
+        try {
+            $DelayTaskLog = TaskDelayLog::where(["project_id" => $project_id, "task_id" => $task_id])->select("old_ddl", "new_ddl", "update_at")->get();
+        }catch (QueryException $queryException){
+            return response()->json([
+                "error_code" => 1,
+                "message" => "获取延期日志失败",
+                "cause" => $queryException
+            ]);
+
+        }
+
+        return response()->json([
+            "error_code" => 0,
+            "data" => $DelayTaskLog
+        ]);
+
+    }
 
     /*仅在本控制器内使用的方法*/
     /*保护方法*/

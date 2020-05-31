@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Psy\Exception\ErrorException;
 
 
 class ProjectController extends Controller
@@ -598,17 +599,25 @@ class ProjectController extends Controller
             $name=$member[$i]["name"];
             try {
                 $rate = $this->GetEveryRate($project_id, $name);
-            }catch (\DivisionByZeroError $exception){
+            }catch (\DivisionByZeroError $exception) {
                 return response()->json([
                     "error_code" => 1,
                     "message" => "不能被0除",
                     "cause" => $exception
                 ]);
             }
-            $avatar=chunk_split(base64_encode($this->LoadAvatar($name)));
+
+            //$avatar = $this->LoadAvatar($name);
+            $avatar_uri=Student::where('name',$name)->value("avatar");
+            $file_path="image/".$avatar_uri;
+            $avatar =Storage::get($file_path);
+
+            $ext=explode('.',$avatar_uri)[1];
+            $prefix='data:'.'image/'.$ext.';base64,';
+            $base_64=$prefix.chunk_split(base64_encode($avatar));
 
             $member[$i]["rate"]=$rate;
-            $member[$i]["avatar"]=$avatar;
+            $member[$i]["avatar"]=mb_convert_encoding($base_64,'UTF-8','UTF-8');
         }
         if($member)
         {
@@ -942,13 +951,6 @@ class ProjectController extends Controller
 
 
 
-    protected function LoadAvatar($name)//加载成员头像
-    {
-        $avatar_uri=Student::where('name',$name)->value("avatar");
-        $file_path="image/".$avatar_uri;
-        $avatar =Storage::get($file_path);
-        return $avatar;
-    }
 
     protected function GetMemberID($name)
     {
